@@ -1,4 +1,4 @@
-import Category from '@/models/category/Category';
+import Tax from '@/models/Tax/Tax';
 import { api } from '@/services/apiClient';
 import { DeleteIcon, EditIcon, SearchIcon } from '@chakra-ui/icons';
 import {
@@ -25,39 +25,37 @@ import {
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-export default function CategoryPage() {
+export default function TaxPage() {
     const toast = useToast();
     const router = useRouter();
-    const [categories, setCategories] = useState<Category[]>([]);
+    const [taxs, setTaxs] = useState<Tax[]>([]);
 
     useEffect(() => {
-        setTimeout(() => {
-            api.get(`Category`).then(response => {
-                console.log('effect', response.data);
-                response.data.data.forEach((category: Category) => {
-                    categories.push(category);
-                    setCategories([...categories]);
-                });
+        api.get(`Tax`).then(response => {
+            console.log('effect', response.data);
+            response.data.data.forEach((tax: Tax) => {
+                taxs.push(tax);
+                setTaxs([...taxs]);
             });
-        }, 1000);
+        });
     }, []);
 
     const handleDelete = (id: string) => {
-        api.delete(`Category/${id}`)
+        api.delete(`Tax/${id}`)
             .then(response => {
                 toast({
-                    title: 'Success delte  category.',
-                    description: 'Category delte with success.',
+                    title: 'Success delte tax.',
+                    description: 'Tax delte with success.',
                     status: 'success',
                     duration: 9000,
                     isClosable: true,
                 });
-                router.push('/category/');
+                router.push('/tax/');
             })
             .catch(err => {
                 toast({
-                    title: 'Failure to delte a category.',
-                    description: 'Error to delte a category.',
+                    title: 'Failure to delte a tax.',
+                    description: 'Error to delte a tax.',
                     status: 'error',
                     duration: 9000,
                     isClosable: true,
@@ -65,11 +63,11 @@ export default function CategoryPage() {
             });
     };
     const handleEdit = (id: string) => {
-        router.push('/category/' + id);
+        router.push('/tax/' + id);
     };
 
     const handleCreate = () => {
-        router.push('/category/create');
+        router.push('/tax/create');
     };
 
     return (
@@ -77,14 +75,14 @@ export default function CategoryPage() {
             <Stack padding={10}>
                 <HStack alignItems="center" justifyContent="space-between">
                     <Heading as="h1" size="xl">
-                        List of categories
+                        List of taxs
                     </Heading>
                     <Button colorScheme="green" onClick={() => handleCreate()}>
-                        Create a new Category
+                        Create a new tax
                     </Button>
                 </HStack>
 
-                {categories.length === 0 ? (
+                {taxs.length === 0 ? (
                     <Container>
                         <Text>Loading...</Text>
                         <Spinner size="xl" />
@@ -103,7 +101,10 @@ export default function CategoryPage() {
                                     <Text>Description</Text>
                                 </Th>
                                 <Th>
-                                    <Text>Short Description</Text>
+                                    <Text>Percentage</Text>
+                                </Th>
+                                <Th>
+                                    <Text>idCategory</Text>
                                 </Th>
                                 <Th>
                                     <Text>Created Date</Text>
@@ -120,16 +121,17 @@ export default function CategoryPage() {
                             </Tr>
                         </Thead>
                         <Tbody>
-                            {categories.map(category => {
+                            {taxs.map(tax => {
                                 return (
-                                    <Tr key={category.id}>
-                                        <Td>{category.id}</Td>
-                                        <Td>{category.name}</Td>
-                                        <Td>{category.description}</Td>
-                                        <Td>{category.shortDescription}</Td>
-                                        <Td>{category.createdAt}</Td>
-                                        <Td>{category.updatedAt}</Td>
-                                        <Td>{category.deletedAt}</Td>
+                                    <Tr key={tax.id}>
+                                        <Td>{tax.id}</Td>
+                                        <Td>{tax.name}</Td>
+                                        <Td>{tax.description}</Td>
+                                        <Td>{tax.percentage}</Td>
+                                        <Td>{tax.idCategory}</Td>
+                                        <Td>{tax.createdAt}</Td>
+                                        <Td>{tax.updatedAt}</Td>
+                                        <Td>{tax.deletedAt}</Td>
                                         <Td>
                                             <HStack padding={5} align="center">
                                                 <Tooltip
@@ -141,9 +143,7 @@ export default function CategoryPage() {
                                                         aria-label="Edit category"
                                                         icon={<EditIcon />}
                                                         onClick={() =>
-                                                            handleEdit(
-                                                                category.id,
-                                                            )
+                                                            handleEdit(tax.id)
                                                         }
                                                     />
                                                 </Tooltip>
@@ -156,9 +156,7 @@ export default function CategoryPage() {
                                                         aria-label="Delete category"
                                                         icon={<DeleteIcon />}
                                                         onClick={() =>
-                                                            handleDelete(
-                                                                category.id,
-                                                            )
+                                                            handleDelete(tax.id)
                                                         }
                                                     />
                                                 </Tooltip>
@@ -177,10 +175,13 @@ export default function CategoryPage() {
                                     <Text>Name</Text>
                                 </Th>
                                 <Th>
-                                    <Text>Name</Text>
+                                    <Text>Description</Text>
                                 </Th>
                                 <Th>
-                                    <Text>Short Description</Text>
+                                    <Text>Percentage</Text>
+                                </Th>
+                                <Th>
+                                    <Text>idCategory</Text>
                                 </Th>
                                 <Th>
                                     <Text>Created Date</Text>
