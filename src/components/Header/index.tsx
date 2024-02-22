@@ -28,8 +28,9 @@ import { useContext } from 'react';
 
 export default function Header() {
     const { isOpen, onToggle } = useDisclosure();
-    const { user, signOut } = useContext(AuthContext);
+    const { isAuthenticated, signOut } = useContext(AuthContext);
 
+    console.log('isAuthenticated', isAuthenticated);
     return (
         <Box>
             <Flex
@@ -77,7 +78,7 @@ export default function Header() {
                     </Text>
 
                     <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
-                        <DesktopNav user={user} />
+                        <DesktopNav user={isAuthenticated} />
                     </Flex>
                 </Flex>
 
@@ -88,7 +89,7 @@ export default function Header() {
                     spacing={6}
                 >
                     <SwitchTheme />
-                    {user && (
+                    {isAuthenticated && (
                         <>
                             <Button
                                 as={'a'}
@@ -107,7 +108,7 @@ export default function Header() {
                             </Button>
                         </>
                     )}
-                    {!!!user && (
+                    {!isAuthenticated && (
                         <>
                             <Button
                                 as={'a'}
@@ -141,7 +142,7 @@ export default function Header() {
             </Flex>
 
             <Collapse in={isOpen} animateOpacity>
-                <MobileNav user={user} />
+                <MobileNav user={isAuthenticated} />
             </Collapse>
         </Box>
     );
@@ -330,7 +331,7 @@ interface NavItem {
 }
 
 const getNavItems = (user: any): Array<NavItem> => {
-    if (!!user) {
+    if (user) {
         return [
             {
                 label: 'Dashboard',

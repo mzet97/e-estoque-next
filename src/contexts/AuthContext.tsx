@@ -11,7 +11,6 @@ type AuthContextData = {
     signIn: (credentials: UserLogin) => Promise<void>;
     signUp: (singUpData: UserRegister) => Promise<void>;
     signOut: () => void;
-    user: Token | undefined;
     isAuthenticated: boolean;
 };
 
@@ -33,8 +32,7 @@ export function signOut() {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-    const [user, setUser] = useState<Token>();
-    const isAuthenticated = !!user;
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
     useEffect(() => {
         authChannel = new BroadcastChannel('auth');
@@ -54,15 +52,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const { 'nextauth.token': token } = parseCookies();
 
         if (token) {
-            api.get('auth/refresh_token')
-                .then(response => {
-                    const token = response.data;
-
-                    setUser({ ...token });
-                })
-                .catch(() => {
-                    signOut();
-                });
+            console.log('Token', token);
+            setIsAuthenticated(true);
+            // api.post('Auth/refresh_token', {
+            //     token: token
+            // })
+            //     .then(response => {
+            //         const token = response.data;
+            //         setUser({ ...token });
+            //     })
+            //     .catch(() => {
+            //         signOut();
+            //     });
         }
     }, []);
 
@@ -74,6 +75,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             });
 
             const data = response.data;
+            console.log('Data', data);
             const token: Token = { ...data };
             console.log(token);
             setCookie(undefined, 'nextauth.token', token.accessToken, {
@@ -86,7 +88,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 path: '/',
             });
 
-            setUser(token);
+            setIsAuthenticated(true);
 
             api.defaults.headers['Authorization'] =
                 `Bearer ${token.accessToken}`;
@@ -105,7 +107,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
         if (!!token) {
             setCookie(undefined, 'nextauth.token', token.accessToken, {
-                maxAge: token.expiresIn, // 30 days
+                maxAge: token.expiresIn,
                 path: '/',
             });
 
@@ -114,7 +116,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 path: '/',
             });
 
-            setUser(token);
+            setIsAuthenticated(true);
 
             api.defaults.headers['Authorization'] =
                 `Bearer ${token.accessToken}`;
@@ -127,7 +129,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     return (
         <AuthContext.Provider
-            value={{ signIn, signUp, signOut, isAuthenticated, user }}
+            value={{ signIn, signUp, signOut, isAuthenticated }}
         >
             {children}
         </AuthContext.Provider>
