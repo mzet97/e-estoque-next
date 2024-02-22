@@ -20,10 +20,14 @@ import {
     Tooltip,
     IconButton,
     Spinner,
+    useToast,
 } from '@chakra-ui/react';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export default function CategoryPage() {
+    const toast = useToast();
+    const router = useRouter();
     const [categories, setCategories] = useState<Category[]>([]);
 
     useEffect(() => {
@@ -31,14 +35,42 @@ export default function CategoryPage() {
             api.get(`Category`).then(response => {
                 console.log('effect', response.data);
                 response.data.data.forEach((category: Category) => {
-                    setCategories([...categories, category]);
+                    categories.push(category);
+                    setCategories([...categories]);
                 });
             });
-        }, 10000);
+        }, 1000);
     }, []);
 
-    const handleDelete = (id: string) => {};
-    const handleEdit = (id: string) => {};
+    const handleDelete = (id: string) => {
+        api.delete(`Category/${id}`)
+            .then(response => {
+                toast({
+                    title: 'Success delte  category.',
+                    description: 'Category delte with success.',
+                    status: 'success',
+                    duration: 9000,
+                    isClosable: true,
+                });
+                router.push('/category/');
+            })
+            .catch(err => {
+                toast({
+                    title: 'Failure to delte a category.',
+                    description: 'Error to delte a category.',
+                    status: 'error',
+                    duration: 9000,
+                    isClosable: true,
+                });
+            });
+    };
+    const handleEdit = (id: string) => {
+        router.push('/category/' + id);
+    };
+
+    const handleCreate = () => {
+        router.push('/category/create');
+    };
 
     return (
         <>
@@ -47,7 +79,9 @@ export default function CategoryPage() {
                     <Heading as="h1" size="xl">
                         List of categories
                     </Heading>
-                    <Button colorScheme="green">Create a new Category</Button>
+                    <Button colorScheme="green" onClick={() => handleCreate()}>
+                        Create a new Category
+                    </Button>
                 </HStack>
 
                 {categories.length === 0 ? (
