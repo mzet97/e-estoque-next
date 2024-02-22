@@ -30,9 +30,8 @@ export default function CategoryPage() {
         setTimeout(() => {
             api.get(`Category`).then(response => {
                 console.log('effect', response.data);
-                response.data.data.forEach(category => {
-                    const item: Category = category;
-                    setCategories([...categories, item]);
+                response.data.data.forEach((category: Category) => {
+                    setCategories([...categories, category]);
                 });
             });
         }, 10000);
