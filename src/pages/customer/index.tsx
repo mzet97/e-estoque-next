@@ -1,3 +1,5 @@
+import Company from '@/models/Company/Company';
+import Customer from '@/models/Customer/Customer';
 import Category from '@/models/category/Category';
 import { api } from '@/services/apiClient';
 import { DeleteIcon, EditIcon, SearchIcon } from '@chakra-ui/icons';
@@ -25,37 +27,37 @@ import {
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-export default function CategoryPage() {
+export default function CustomerPage() {
     const toast = useToast();
     const router = useRouter();
-    const [categories, setCategories] = useState<Category[]>([]);
+    const [customers, setCustomers] = useState<Customer[]>([]);
 
     useEffect(() => {
-        api.get(`Category`).then(response => {
+        api.get(`Customer`).then(response => {
             console.log('effect', response.data);
-            response.data.data.forEach((category: Category) => {
-                categories.push(category);
-                setCategories([...categories]);
+            response.data.data.forEach((customer: Customer) => {
+                customers.push(customer);
+                setCustomers([...customers]);
             });
         });
     }, []);
 
     const handleDelete = (id: string) => {
-        api.delete(`Category/${id}`)
+        api.delete(`Customer/${id}`)
             .then(response => {
                 toast({
-                    title: 'Success delte  category.',
-                    description: 'Category delte with success.',
+                    title: 'Success delte customer.',
+                    description: 'Customer delte with success.',
                     status: 'success',
                     duration: 9000,
                     isClosable: true,
                 });
-                router.push('/category/');
+                router.push('/customer/');
             })
             .catch(err => {
                 toast({
-                    title: 'Failure to delte a category.',
-                    description: 'Error to delte a category.',
+                    title: 'Failure to delte a customer.',
+                    description: 'Error to delte a customer.',
                     status: 'error',
                     duration: 9000,
                     isClosable: true,
@@ -63,11 +65,11 @@ export default function CategoryPage() {
             });
     };
     const handleEdit = (id: string) => {
-        router.push('/category/' + id);
+        router.push('/customer/' + id);
     };
 
     const handleCreate = () => {
-        router.push('/category/create');
+        router.push('/customer/create');
     };
 
     return (
@@ -75,14 +77,14 @@ export default function CategoryPage() {
             <Stack padding={10}>
                 <HStack alignItems="center" justifyContent="space-between">
                     <Heading as="h1" size="xl">
-                        List of categories
+                        List of customers
                     </Heading>
                     <Button colorScheme="green" onClick={() => handleCreate()}>
-                        Create a new Category
+                        Create a new customer
                     </Button>
                 </HStack>
 
-                {categories.length === 0 ? (
+                {customers.length === 0 ? (
                     <Container>
                         <Text>Loading...</Text>
                         <Spinner size="xl" />
@@ -98,10 +100,19 @@ export default function CategoryPage() {
                                     <Text>Name</Text>
                                 </Th>
                                 <Th>
+                                    <Text>DocId</Text>
+                                </Th>
+                                <Th>
+                                    <Text>Email</Text>
+                                </Th>
+                                <Th>
                                     <Text>Description</Text>
                                 </Th>
                                 <Th>
-                                    <Text>Short Description</Text>
+                                    <Text>Phone Number</Text>
+                                </Th>
+                                <Th>
+                                    <Text>idCustomerAddress</Text>
                                 </Th>
                                 <Th>
                                     <Text>Created Date</Text>
@@ -118,16 +129,19 @@ export default function CategoryPage() {
                             </Tr>
                         </Thead>
                         <Tbody>
-                            {categories.map(category => {
+                            {customers.map(customer => {
                                 return (
-                                    <Tr key={category.id}>
-                                        <Td>{category.id}</Td>
-                                        <Td>{category.name}</Td>
-                                        <Td>{category.description}</Td>
-                                        <Td>{category.shortDescription}</Td>
-                                        <Td>{category.createdAt}</Td>
-                                        <Td>{category.updatedAt}</Td>
-                                        <Td>{category.deletedAt}</Td>
+                                    <Tr key={customer.id}>
+                                        <Td>{customer.id}</Td>
+                                        <Td>{customer.name}</Td>
+                                        <Td>{customer.docId}</Td>
+                                        <Td>{customer.email}</Td>
+                                        <Td>{customer.description}</Td>
+                                        <Td>{customer.phoneNumber}</Td>
+                                        <Td>{customer.idCompanyAddress}</Td>
+                                        <Td>{customer.createdAt}</Td>
+                                        <Td>{customer.updatedAt}</Td>
+                                        <Td>{customer.deletedAt}</Td>
                                         <Td>
                                             <HStack padding={5} align="center">
                                                 <Tooltip
@@ -140,7 +154,7 @@ export default function CategoryPage() {
                                                         icon={<EditIcon />}
                                                         onClick={() =>
                                                             handleEdit(
-                                                                category.id,
+                                                                customer.id,
                                                             )
                                                         }
                                                     />
@@ -155,7 +169,7 @@ export default function CategoryPage() {
                                                         icon={<DeleteIcon />}
                                                         onClick={() =>
                                                             handleDelete(
-                                                                category.id,
+                                                                customer.id,
                                                             )
                                                         }
                                                     />
@@ -175,10 +189,19 @@ export default function CategoryPage() {
                                     <Text>Name</Text>
                                 </Th>
                                 <Th>
-                                    <Text>Name</Text>
+                                    <Text>DocId</Text>
                                 </Th>
                                 <Th>
-                                    <Text>Short Description</Text>
+                                    <Text>Email</Text>
+                                </Th>
+                                <Th>
+                                    <Text>Description</Text>
+                                </Th>
+                                <Th>
+                                    <Text>Phone Number</Text>
+                                </Th>
+                                <Th>
+                                    <Text>idCustomerAddress</Text>
                                 </Th>
                                 <Th>
                                     <Text>Created Date</Text>

@@ -23,7 +23,7 @@ const schema = yup.object().shape({
     shortDescription: yup.string().required().min(3).max(500),
 });
 
-export default function CreateCategptyPage() {
+export default function CreateCategoryPage() {
     const {
         register,
         handleSubmit,
