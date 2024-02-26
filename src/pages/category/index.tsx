@@ -1,3 +1,4 @@
+import canAccess from '@/components/CanAccess/CanAccess';
 import Category from '@/models/category/Category';
 import { api } from '@/services/apiClient';
 import { DeleteIcon, EditIcon, SearchIcon } from '@chakra-ui/icons';
@@ -25,7 +26,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-export default function CategoryPage() {
+function CategoryPage() {
     const toast = useToast();
     const router = useRouter();
     const [categories, setCategories] = useState<Category[]>([]);
@@ -200,3 +201,5 @@ export default function CategoryPage() {
         </>
     );
 }
+
+export default canAccess(CategoryPage);

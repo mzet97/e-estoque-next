@@ -1,11 +1,9 @@
+import canAccess from '@/components/CanAccess/CanAccess';
 import Company from '@/models/Company/Company';
-import Category from '@/models/category/Category';
 import { api } from '@/services/apiClient';
-import { DeleteIcon, EditIcon, SearchIcon } from '@chakra-ui/icons';
+import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
 import {
     Table,
-    TableCaption,
-    TableContainer,
     Tbody,
     Td,
     Tfoot,
@@ -26,7 +24,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-export default function CompanyPage() {
+function CompanyPage() {
     const toast = useToast();
     const router = useRouter();
     const [companies, setCompanies] = useState<Company[]>([]);
@@ -222,3 +220,5 @@ export default function CompanyPage() {
         </>
     );
 }
+
+export default canAccess(CompanyPage);

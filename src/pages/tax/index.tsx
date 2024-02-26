@@ -1,10 +1,9 @@
+import canAccess from '@/components/CanAccess/CanAccess';
 import Tax from '@/models/Tax/Tax';
 import { api } from '@/services/apiClient';
-import { DeleteIcon, EditIcon, SearchIcon } from '@chakra-ui/icons';
+import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
 import {
     Table,
-    TableCaption,
-    TableContainer,
     Tbody,
     Td,
     Tfoot,
@@ -25,7 +24,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-export default function TaxPage() {
+function TaxPage() {
     const toast = useToast();
     const router = useRouter();
     const [taxs, setTaxs] = useState<Tax[]>([]);
@@ -203,3 +202,5 @@ export default function TaxPage() {
         </>
     );
 }
+
+export default canAccess(TaxPage);

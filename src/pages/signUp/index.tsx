@@ -4,8 +4,6 @@ import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { AuthContext } from '@/contexts/AuthContext';
-import { useContext } from 'react';
 
 import {
     Flex,
@@ -28,6 +26,7 @@ import {
 import { useState } from 'react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import UserRegister from '@/models/auth/UserRegister';
+import { signUp } from '@/services/auth';
 
 const schema = yup.object().shape({
     username: yup.string().required('Username is required'),
@@ -56,7 +55,6 @@ export default function SignUp() {
 
     const toast = useToast();
     const router = useRouter();
-    const { signUp } = useContext(AuthContext);
 
     const onSubmit = async (values: UserRegister) => {
         try {
@@ -113,7 +111,6 @@ export default function SignUp() {
                                 <Box>
                                     <FormControl
                                         isInvalid={!!errors?.firstName?.message}
-                                        errortext={errors?.firstName?.message}
                                         id="name"
                                         isRequired
                                     >
@@ -133,7 +130,6 @@ export default function SignUp() {
                                 <Box>
                                     <FormControl
                                         isInvalid={!!errors?.lastName?.message}
-                                        errortext={errors?.lastName?.message}
                                         id="lastName"
                                         isRequired
                                     >
@@ -153,7 +149,6 @@ export default function SignUp() {
                                 <Box>
                                     <FormControl
                                         isInvalid={!!errors?.username?.message}
-                                        errortext={errors?.username?.message}
                                         id="username"
                                         isRequired
                                     >
@@ -173,7 +168,6 @@ export default function SignUp() {
                             <Stack spacing={4}>
                                 <FormControl
                                     isInvalid={!!errors?.email?.message}
-                                    errortext={errors?.email?.message}
                                     id="email"
                                     isRequired
                                 >
@@ -190,7 +184,6 @@ export default function SignUp() {
                                 </FormControl>
                                 <FormControl
                                     isInvalid={!!errors?.password?.message}
-                                    errortext={errors?.password?.message}
                                     id="password"
                                     isRequired
                                 >
@@ -232,7 +225,6 @@ export default function SignUp() {
                                     isInvalid={
                                         !!errors?.confirmPassword?.message
                                     }
-                                    errortext={errors?.confirmPassword?.message}
                                     id="confirmPassword"
                                     isRequired
                                 >

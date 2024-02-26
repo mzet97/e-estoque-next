@@ -17,6 +17,7 @@ import { GoLocation } from 'react-icons/go';
 import { FaBox } from 'react-icons/fa';
 import { IoBagHandle } from 'react-icons/io5';
 import { GoPersonFill } from 'react-icons/go';
+import canAccess from '@/components/CanAccess/CanAccess';
 interface StatsCardProps {
     title: string;
     stat: string;
@@ -55,7 +56,7 @@ function StatsCard(props: StatsCardProps) {
     );
 }
 
-export default function BasicStatistics() {
+function BasicStatistics() {
     return (
         <Box maxW="7xl" mx={'auto'} pt={5} px={{ base: 2, sm: 12, md: 17 }}>
             <chakra.h1
@@ -89,3 +90,5 @@ export default function BasicStatistics() {
         </Box>
     );
 }
+
+export default canAccess(BasicStatistics);

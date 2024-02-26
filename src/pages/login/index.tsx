@@ -19,12 +19,11 @@ import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/navigation';
-import { AuthContext } from '@/contexts/AuthContext';
-import { useContext } from 'react';
 import UserLogin from '@/models/auth/UserLogin';
+import { signIn } from 'next-auth/react';
 
 const schema = yup.object().shape({
-    username: yup.string().required(),
+    email: yup.string().required(),
     password: yup.string().min(8).required(),
 });
 
@@ -40,25 +39,37 @@ const Login: React.FC = () => {
 
     const toast = useToast();
     const router = useRouter();
-    const { signIn } = useContext(AuthContext);
 
     const onSubmit = async (values: UserLogin) => {
         try {
             console.log('input', values);
-            await signIn({
-                username: values.username,
+
+            const response = await signIn('credentials', {
+                redirect: false,
+                email: values.email,
                 password: values.password,
             });
 
-            toast({
-                title: 'Success login.',
-                description: 'Can use the system',
-                status: 'success',
-                duration: 9000,
-                isClosable: true,
-            });
+            console.log('response', response);
 
-            router.push('/dashboard');
+            if (!response?.error) {
+                toast({
+                    title: 'Success login.',
+                    description: 'Can use the system',
+                    status: 'success',
+                    duration: 9000,
+                    isClosable: true,
+                });
+                router.push('/dashboard');
+            } else {
+                toast({
+                    title: 'Failure login.',
+                    description: 'Check password and e-mail',
+                    status: 'error',
+                    duration: 9000,
+                    isClosable: true,
+                });
+            }
         } catch (err) {
             toast({
                 title: 'Failure login.',
@@ -93,26 +104,24 @@ const Login: React.FC = () => {
                     >
                         <Stack spacing={4}>
                             <FormControl
-                                isInvalid={!!errors?.username?.message}
-                                errortext={errors?.username?.message}
+                                isInvalid={!!errors?.email?.message}
                                 id="username"
                                 isRequired
                             >
-                                <FormLabel>Username or Email</FormLabel>
+                                <FormLabel>Email</FormLabel>
                                 <Input
                                     type="text"
-                                    placeholder="Username"
-                                    {...register('username', {
+                                    placeholder="Email"
+                                    {...register('email', {
                                         required: 'Required',
                                     })}
                                 />
                                 <FormErrorMessage>
-                                    {errors?.username?.message}
+                                    {errors?.email?.message}
                                 </FormErrorMessage>
                             </FormControl>
                             <FormControl
                                 isInvalid={!!errors?.password?.message}
-                                errortext={errors?.password?.message}
                                 id="password"
                             >
                                 <FormLabel>Password</FormLabel>
@@ -146,7 +155,7 @@ const Login: React.FC = () => {
                                     }}
                                     onClick={handleSubmit(onSubmit)}
                                     disabled={
-                                        !!errors.username || !!errors.password
+                                        !!errors.email || !!errors.password
                                     }
                                 >
                                     Sign in

@@ -96,7 +96,6 @@ export default function EditCategoryPage() {
                         <Stack spacing={3} padding={5}>
                             <FormControl
                                 isInvalid={!!errors?.id?.message}
-                                errortext={errors?.id?.message}
                                 id="id"
                                 isRequired
                                 hidden
@@ -116,7 +115,6 @@ export default function EditCategoryPage() {
                             </FormControl>
                             <FormControl
                                 isInvalid={!!errors?.name?.message}
-                                errortext={errors?.name?.message}
                                 id="name"
                                 isRequired
                             >
@@ -135,7 +133,6 @@ export default function EditCategoryPage() {
                             </FormControl>
                             <FormControl
                                 isInvalid={!!errors?.description?.message}
-                                errortext={errors?.description?.message}
                                 id="name"
                                 isRequired
                             >
@@ -154,7 +151,6 @@ export default function EditCategoryPage() {
                             </FormControl>
                             <FormControl
                                 isInvalid={!!errors?.shortDescription?.message}
-                                errortext={errors?.shortDescription?.message}
                                 id="name"
                                 isRequired
                             >

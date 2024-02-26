@@ -86,7 +86,6 @@ export default function CreateTaxPage() {
                     <Stack spacing={3} padding={5}>
                         <FormControl
                             isInvalid={!!errors?.name?.message}
-                            errortext={errors?.name?.message}
                             id="name"
                             isRequired
                         >
@@ -104,7 +103,6 @@ export default function CreateTaxPage() {
                         </FormControl>
                         <FormControl
                             isInvalid={!!errors?.description?.message}
-                            errortext={errors?.description?.message}
                             id="name"
                             isRequired
                         >
@@ -122,7 +120,6 @@ export default function CreateTaxPage() {
                         </FormControl>
                         <FormControl
                             isInvalid={!!errors?.percentage?.message}
-                            errortext={errors?.percentage?.message}
                             id="name"
                             isRequired
                         >
@@ -141,7 +138,6 @@ export default function CreateTaxPage() {
 
                         <FormControl
                             isInvalid={!!errors?.idCategory?.message}
-                            errortext={errors?.idCategory?.message}
                             id="name"
                             isRequired
                         >

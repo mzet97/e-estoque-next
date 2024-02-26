@@ -145,7 +145,6 @@ export default function EditCustomerPage() {
                                     </Heading>
                                     <FormControl
                                         isInvalid={!!errors?.id?.message}
-                                        errortext={errors?.id?.message}
                                         id="id"
                                         isRequired
                                         hidden
@@ -167,9 +166,6 @@ export default function EditCustomerPage() {
                                         isInvalid={
                                             !!errors?.idCustomerAddress?.message
                                         }
-                                        errortext={
-                                            errors?.idCustomerAddress?.message
-                                        }
                                         id="idcustomerAddress"
                                         isRequired
                                         hidden
@@ -189,7 +185,6 @@ export default function EditCustomerPage() {
                                     </FormControl>
                                     <FormControl
                                         isInvalid={!!errors?.name?.message}
-                                        errortext={errors?.name?.message}
                                         id="name"
                                         isRequired
                                     >
@@ -208,7 +203,6 @@ export default function EditCustomerPage() {
                                     </FormControl>
                                     <FormControl
                                         isInvalid={!!errors?.docId?.message}
-                                        errortext={errors?.docId?.message}
                                         id="docId"
                                         isRequired
                                     >
@@ -227,7 +221,6 @@ export default function EditCustomerPage() {
                                     </FormControl>
                                     <FormControl
                                         isInvalid={!!errors?.email?.message}
-                                        errortext={errors?.email?.message}
                                         id="email"
                                         isRequired
                                     >
@@ -248,7 +241,6 @@ export default function EditCustomerPage() {
                                         isInvalid={
                                             !!errors?.description?.message
                                         }
-                                        errortext={errors?.description?.message}
                                         id="description"
                                         isRequired
                                     >
@@ -269,7 +261,6 @@ export default function EditCustomerPage() {
                                         isInvalid={
                                             !!errors?.phoneNumber?.message
                                         }
-                                        errortext={errors?.phoneNumber?.message}
                                         id="phoneNumber"
                                         isRequired
                                     >
@@ -304,10 +295,6 @@ export default function EditCustomerPage() {
                                             !!errors?.customerAddress?.street
                                                 ?.message
                                         }
-                                        errortext={
-                                            errors?.customerAddress?.street
-                                                ?.message
-                                        }
                                         id="street"
                                         isRequired
                                     >
@@ -335,10 +322,6 @@ export default function EditCustomerPage() {
                                     <FormControl
                                         isInvalid={
                                             !!errors?.customerAddress?.number
-                                                ?.message
-                                        }
-                                        errortext={
-                                            errors?.customerAddress?.number
                                                 ?.message
                                         }
                                         id="number"
@@ -370,10 +353,6 @@ export default function EditCustomerPage() {
                                             !!errors?.customerAddress
                                                 ?.complement?.message
                                         }
-                                        errortext={
-                                            errors?.customerAddress?.complement
-                                                ?.message
-                                        }
                                         id="complement"
                                         isRequired
                                     >
@@ -404,10 +383,6 @@ export default function EditCustomerPage() {
                                             !!errors?.customerAddress
                                                 ?.neighborhood?.message
                                         }
-                                        errortext={
-                                            errors?.customerAddress
-                                                ?.neighborhood?.message
-                                        }
                                         id="neighborhood"
                                         isRequired
                                     >
@@ -436,10 +411,6 @@ export default function EditCustomerPage() {
                                     <FormControl
                                         isInvalid={
                                             !!errors?.customerAddress?.district
-                                                ?.message
-                                        }
-                                        errortext={
-                                            errors?.customerAddress?.district
                                                 ?.message
                                         }
                                         id="district"
@@ -484,10 +455,6 @@ export default function EditCustomerPage() {
                                             !!errors?.customerAddress?.city
                                                 ?.message
                                         }
-                                        errortext={
-                                            errors?.customerAddress?.city
-                                                ?.message
-                                        }
                                         id="city"
                                         isRequired
                                     >
@@ -515,10 +482,6 @@ export default function EditCustomerPage() {
                                     <FormControl
                                         isInvalid={
                                             !!errors?.customerAddress?.county
-                                                ?.message
-                                        }
-                                        errortext={
-                                            errors?.customerAddress?.county
                                                 ?.message
                                         }
                                         id="county"
@@ -550,10 +513,6 @@ export default function EditCustomerPage() {
                                             !!errors?.customerAddress?.zipCode
                                                 ?.message
                                         }
-                                        errortext={
-                                            errors?.customerAddress?.zipCode
-                                                ?.message
-                                        }
                                         id="zipCode"
                                         isRequired
                                     >
@@ -581,10 +540,6 @@ export default function EditCustomerPage() {
                                     <FormControl
                                         isInvalid={
                                             !!errors?.customerAddress?.latitude
-                                                ?.message
-                                        }
-                                        errortext={
-                                            errors?.customerAddress?.latitude
                                                 ?.message
                                         }
                                         id="latitude"
@@ -615,10 +570,6 @@ export default function EditCustomerPage() {
                                     <FormControl
                                         isInvalid={
                                             !!errors?.customerAddress?.longitude
-                                                ?.message
-                                        }
-                                        errortext={
-                                            errors?.customerAddress?.longitude
                                                 ?.message
                                         }
                                         id="longitude"

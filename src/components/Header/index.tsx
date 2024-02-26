@@ -23,14 +23,13 @@ import {
     ChevronRightIcon,
 } from '@chakra-ui/icons';
 import SwitchTheme from '../SwitchTheme';
-import { AuthContext } from '@/contexts/AuthContext';
-import { useContext } from 'react';
+import { signOut, useSession } from 'next-auth/react';
 
 export default function Header() {
     const { isOpen, onToggle } = useDisclosure();
-    const { isAuthenticated, signOut } = useContext(AuthContext);
+    const { data: session } = useSession();
 
-    console.log('isAuthenticated', isAuthenticated);
+    console.log('Session', session);
     return (
         <Box>
             <Flex
@@ -78,7 +77,7 @@ export default function Header() {
                     </Text>
 
                     <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
-                        <DesktopNav user={isAuthenticated} />
+                        <DesktopNav user={session?.user} />
                     </Flex>
                 </Flex>
 
@@ -89,7 +88,7 @@ export default function Header() {
                     spacing={6}
                 >
                     <SwitchTheme />
-                    {isAuthenticated && (
+                    {session?.user && (
                         <>
                             <Button
                                 as={'a'}
@@ -108,7 +107,7 @@ export default function Header() {
                             </Button>
                         </>
                     )}
-                    {!isAuthenticated && (
+                    {!session?.user && (
                         <>
                             <Button
                                 as={'a'}
@@ -142,7 +141,7 @@ export default function Header() {
             </Flex>
 
             <Collapse in={isOpen} animateOpacity>
-                <MobileNav user={isAuthenticated} />
+                <MobileNav user={session?.user} />
             </Collapse>
         </Box>
     );
@@ -331,7 +330,7 @@ interface NavItem {
 }
 
 const getNavItems = (user: any): Array<NavItem> => {
-    if (user) {
+    if (!!user) {
         return [
             {
                 label: 'Dashboard',

@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import {
     Box,
     Button,
-    Container,
     Flex,
     FormControl,
     FormErrorMessage,
@@ -121,7 +120,6 @@ export default function CreateCompanyPage() {
                                 </Heading>
                                 <FormControl
                                     isInvalid={!!errors?.name?.message}
-                                    errortext={errors?.name?.message}
                                     id="name"
                                     isRequired
                                 >
@@ -139,7 +137,6 @@ export default function CreateCompanyPage() {
                                 </FormControl>
                                 <FormControl
                                     isInvalid={!!errors?.docId?.message}
-                                    errortext={errors?.docId?.message}
                                     id="docId"
                                     isRequired
                                 >
@@ -157,7 +154,6 @@ export default function CreateCompanyPage() {
                                 </FormControl>
                                 <FormControl
                                     isInvalid={!!errors?.email?.message}
-                                    errortext={errors?.email?.message}
                                     id="email"
                                     isRequired
                                 >
@@ -175,7 +171,6 @@ export default function CreateCompanyPage() {
                                 </FormControl>
                                 <FormControl
                                     isInvalid={!!errors?.description?.message}
-                                    errortext={errors?.description?.message}
                                     id="description"
                                     isRequired
                                 >
@@ -193,7 +188,6 @@ export default function CreateCompanyPage() {
                                 </FormControl>
                                 <FormControl
                                     isInvalid={!!errors?.phoneNumber?.message}
-                                    errortext={errors?.phoneNumber?.message}
                                     id="phoneNumber"
                                     isRequired
                                 >
@@ -224,11 +218,7 @@ export default function CreateCompanyPage() {
 
                                 <FormControl
                                     isInvalid={
-                                        !!errors?.Address?.street
-                                            ?.message
-                                    }
-                                    errortext={
-                                        errors?.Address?.street?.message
+                                        !!errors?.Address?.street?.message
                                     }
                                     id="street"
                                     isRequired
@@ -242,19 +232,12 @@ export default function CreateCompanyPage() {
                                         })}
                                     />
                                     <FormErrorMessage>
-                                        {
-                                            errors?.Address?.street
-                                                ?.message
-                                        }
+                                        {errors?.Address?.street?.message}
                                     </FormErrorMessage>
                                 </FormControl>
                                 <FormControl
                                     isInvalid={
-                                        !!errors?.Address?.number
-                                            ?.message
-                                    }
-                                    errortext={
-                                        errors?.Address?.number?.message
+                                        !!errors?.Address?.number?.message
                                     }
                                     id="number"
                                     isRequired
@@ -268,20 +251,12 @@ export default function CreateCompanyPage() {
                                         })}
                                     />
                                     <FormErrorMessage>
-                                        {
-                                            errors?.Address?.number
-                                                ?.message
-                                        }
+                                        {errors?.Address?.number?.message}
                                     </FormErrorMessage>
                                 </FormControl>
                                 <FormControl
                                     isInvalid={
-                                        !!errors?.Address?.complement
-                                            ?.message
-                                    }
-                                    errortext={
-                                        errors?.Address?.complement
-                                            ?.message
+                                        !!errors?.Address?.complement?.message
                                     }
                                     id="complement"
                                     isRequired
@@ -290,28 +265,17 @@ export default function CreateCompanyPage() {
                                     <Input
                                         type="text"
                                         placeholder="Complement"
-                                        {...register(
-                                            'Address.complement',
-                                            {
-                                                required: 'Required',
-                                            },
-                                        )}
+                                        {...register('Address.complement', {
+                                            required: 'Required',
+                                        })}
                                     />
                                     <FormErrorMessage>
-                                        {
-                                            errors?.Address?.complement
-                                                ?.message
-                                        }
+                                        {errors?.Address?.complement?.message}
                                     </FormErrorMessage>
                                 </FormControl>
                                 <FormControl
                                     isInvalid={
-                                        !!errors?.Address?.neighborhood
-                                            ?.message
-                                    }
-                                    errortext={
-                                        errors?.Address?.neighborhood
-                                            ?.message
+                                        !!errors?.Address?.neighborhood?.message
                                     }
                                     id="neighborhood"
                                     isRequired
@@ -320,28 +284,17 @@ export default function CreateCompanyPage() {
                                     <Input
                                         type="text"
                                         placeholder="Neighborhood"
-                                        {...register(
-                                            'Address.neighborhood',
-                                            {
-                                                required: 'Required',
-                                            },
-                                        )}
+                                        {...register('Address.neighborhood', {
+                                            required: 'Required',
+                                        })}
                                     />
                                     <FormErrorMessage>
-                                        {
-                                            errors?.Address?.neighborhood
-                                                ?.message
-                                        }
+                                        {errors?.Address?.neighborhood?.message}
                                     </FormErrorMessage>
                                 </FormControl>
                                 <FormControl
                                     isInvalid={
-                                        !!errors?.Address?.district
-                                            ?.message
-                                    }
-                                    errortext={
-                                        errors?.Address?.district
-                                            ?.message
+                                        !!errors?.Address?.district?.message
                                     }
                                     id="district"
                                     isRequired
@@ -350,18 +303,12 @@ export default function CreateCompanyPage() {
                                     <Input
                                         type="text"
                                         placeholder="District"
-                                        {...register(
-                                            'Address.district',
-                                            {
-                                                required: 'Required',
-                                            },
-                                        )}
+                                        {...register('Address.district', {
+                                            required: 'Required',
+                                        })}
                                     />
                                     <FormErrorMessage>
-                                        {
-                                            errors?.Address?.district
-                                                ?.message
-                                        }
+                                        {errors?.Address?.district?.message}
                                     </FormErrorMessage>
                                 </FormControl>
                             </Stack>
@@ -377,12 +324,7 @@ export default function CreateCompanyPage() {
                                     Company address
                                 </Heading>
                                 <FormControl
-                                    isInvalid={
-                                        !!errors?.Address?.city?.message
-                                    }
-                                    errortext={
-                                        errors?.Address?.city?.message
-                                    }
+                                    isInvalid={!!errors?.Address?.city?.message}
                                     id="city"
                                     isRequired
                                 >
@@ -400,11 +342,7 @@ export default function CreateCompanyPage() {
                                 </FormControl>
                                 <FormControl
                                     isInvalid={
-                                        !!errors?.Address?.county
-                                            ?.message
-                                    }
-                                    errortext={
-                                        errors?.Address?.county?.message
+                                        !!errors?.Address?.county?.message
                                     }
                                     id="county"
                                     isRequired
@@ -418,19 +356,12 @@ export default function CreateCompanyPage() {
                                         })}
                                     />
                                     <FormErrorMessage>
-                                        {
-                                            errors?.Address?.county
-                                                ?.message
-                                        }
+                                        {errors?.Address?.county?.message}
                                     </FormErrorMessage>
                                 </FormControl>
                                 <FormControl
                                     isInvalid={
-                                        !!errors?.Address?.zipCode
-                                            ?.message
-                                    }
-                                    errortext={
-                                        errors?.Address?.zipCode?.message
+                                        !!errors?.Address?.zipCode?.message
                                     }
                                     id="zipCode"
                                     isRequired
@@ -444,20 +375,12 @@ export default function CreateCompanyPage() {
                                         })}
                                     />
                                     <FormErrorMessage>
-                                        {
-                                            errors?.Address?.zipCode
-                                                ?.message
-                                        }
+                                        {errors?.Address?.zipCode?.message}
                                     </FormErrorMessage>
                                 </FormControl>
                                 <FormControl
                                     isInvalid={
-                                        !!errors?.Address?.latitude
-                                            ?.message
-                                    }
-                                    errortext={
-                                        errors?.Address?.latitude
-                                            ?.message
+                                        !!errors?.Address?.latitude?.message
                                     }
                                     id="latitude"
                                     isRequired
@@ -466,28 +389,17 @@ export default function CreateCompanyPage() {
                                     <Input
                                         type="text"
                                         placeholder="Latitude"
-                                        {...register(
-                                            'Address.latitude',
-                                            {
-                                                required: 'Required',
-                                            },
-                                        )}
+                                        {...register('Address.latitude', {
+                                            required: 'Required',
+                                        })}
                                     />
                                     <FormErrorMessage>
-                                        {
-                                            errors?.Address?.latitude
-                                                ?.message
-                                        }
+                                        {errors?.Address?.latitude?.message}
                                     </FormErrorMessage>
                                 </FormControl>
                                 <FormControl
                                     isInvalid={
-                                        !!errors?.Address?.longitude
-                                            ?.message
-                                    }
-                                    errortext={
-                                        errors?.Address?.longitude
-                                            ?.message
+                                        !!errors?.Address?.longitude?.message
                                     }
                                     id="longitude"
                                     isRequired
@@ -496,18 +408,12 @@ export default function CreateCompanyPage() {
                                     <Input
                                         type="text"
                                         placeholder="Longitude"
-                                        {...register(
-                                            'Address.longitude',
-                                            {
-                                                required: 'Required',
-                                            },
-                                        )}
+                                        {...register('Address.longitude', {
+                                            required: 'Required',
+                                        })}
                                     />
                                     <FormErrorMessage>
-                                        {
-                                            errors?.Address?.longitude
-                                                ?.message
-                                        }
+                                        {errors?.Address?.longitude?.message}
                                     </FormErrorMessage>
                                 </FormControl>
                             </Stack>

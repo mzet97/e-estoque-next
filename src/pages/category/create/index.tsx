@@ -71,7 +71,6 @@ export default function CreateCategoryPage() {
                     <Stack spacing={3} padding={5}>
                         <FormControl
                             isInvalid={!!errors?.name?.message}
-                            errortext={errors?.name?.message}
                             id="name"
                             isRequired
                         >
@@ -89,7 +88,6 @@ export default function CreateCategoryPage() {
                         </FormControl>
                         <FormControl
                             isInvalid={!!errors?.description?.message}
-                            errortext={errors?.description?.message}
                             id="name"
                             isRequired
                         >
@@ -107,7 +105,6 @@ export default function CreateCategoryPage() {
                         </FormControl>
                         <FormControl
                             isInvalid={!!errors?.shortDescription?.message}
-                            errortext={errors?.shortDescription?.message}
                             id="name"
                             isRequired
                         >

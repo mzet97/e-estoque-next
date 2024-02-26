@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import {
     Box,
     Button,
-    Container,
     Flex,
     FormControl,
     FormErrorMessage,
@@ -19,7 +18,6 @@ import {
     useToast,
 } from '@chakra-ui/react';
 import { api } from '@/services/apiClient';
-import CreateCompany from '@/models/Company/CreateCompany';
 import CreateCustomer from '@/models/Customer/CreateCustomer';
 
 const schema = yup.object().shape({
@@ -122,7 +120,6 @@ export default function CreateCustomerPage() {
                                 </Heading>
                                 <FormControl
                                     isInvalid={!!errors?.name?.message}
-                                    errortext={errors?.name?.message}
                                     id="name"
                                     isRequired
                                 >
@@ -140,7 +137,6 @@ export default function CreateCustomerPage() {
                                 </FormControl>
                                 <FormControl
                                     isInvalid={!!errors?.docId?.message}
-                                    errortext={errors?.docId?.message}
                                     id="docId"
                                     isRequired
                                 >
@@ -158,7 +154,6 @@ export default function CreateCustomerPage() {
                                 </FormControl>
                                 <FormControl
                                     isInvalid={!!errors?.email?.message}
-                                    errortext={errors?.email?.message}
                                     id="email"
                                     isRequired
                                 >
@@ -176,7 +171,6 @@ export default function CreateCustomerPage() {
                                 </FormControl>
                                 <FormControl
                                     isInvalid={!!errors?.description?.message}
-                                    errortext={errors?.description?.message}
                                     id="description"
                                     isRequired
                                 >
@@ -194,7 +188,6 @@ export default function CreateCustomerPage() {
                                 </FormControl>
                                 <FormControl
                                     isInvalid={!!errors?.phoneNumber?.message}
-                                    errortext={errors?.phoneNumber?.message}
                                     id="phoneNumber"
                                     isRequired
                                 >
@@ -227,7 +220,6 @@ export default function CreateCustomerPage() {
                                     isInvalid={
                                         !!errors?.Address?.street?.message
                                     }
-                                    errortext={errors?.Address?.street?.message}
                                     id="street"
                                     isRequired
                                 >
@@ -247,7 +239,6 @@ export default function CreateCustomerPage() {
                                     isInvalid={
                                         !!errors?.Address?.number?.message
                                     }
-                                    errortext={errors?.Address?.number?.message}
                                     id="number"
                                     isRequired
                                 >
@@ -266,9 +257,6 @@ export default function CreateCustomerPage() {
                                 <FormControl
                                     isInvalid={
                                         !!errors?.Address?.complement?.message
-                                    }
-                                    errortext={
-                                        errors?.Address?.complement?.message
                                     }
                                     id="complement"
                                     isRequired
@@ -289,9 +277,6 @@ export default function CreateCustomerPage() {
                                     isInvalid={
                                         !!errors?.Address?.neighborhood?.message
                                     }
-                                    errortext={
-                                        errors?.Address?.neighborhood?.message
-                                    }
                                     id="neighborhood"
                                     isRequired
                                 >
@@ -310,9 +295,6 @@ export default function CreateCustomerPage() {
                                 <FormControl
                                     isInvalid={
                                         !!errors?.Address?.district?.message
-                                    }
-                                    errortext={
-                                        errors?.Address?.district?.message
                                     }
                                     id="district"
                                     isRequired
@@ -343,7 +325,6 @@ export default function CreateCustomerPage() {
                                 </Heading>
                                 <FormControl
                                     isInvalid={!!errors?.Address?.city?.message}
-                                    errortext={errors?.Address?.city?.message}
                                     id="city"
                                     isRequired
                                 >
@@ -363,7 +344,6 @@ export default function CreateCustomerPage() {
                                     isInvalid={
                                         !!errors?.Address?.county?.message
                                     }
-                                    errortext={errors?.Address?.county?.message}
                                     id="county"
                                     isRequired
                                 >
@@ -382,9 +362,6 @@ export default function CreateCustomerPage() {
                                 <FormControl
                                     isInvalid={
                                         !!errors?.Address?.zipCode?.message
-                                    }
-                                    errortext={
-                                        errors?.Address?.zipCode?.message
                                     }
                                     id="zipCode"
                                     isRequired
@@ -405,9 +382,6 @@ export default function CreateCustomerPage() {
                                     isInvalid={
                                         !!errors?.Address?.latitude?.message
                                     }
-                                    errortext={
-                                        errors?.Address?.latitude?.message
-                                    }
                                     id="latitude"
                                     isRequired
                                 >
@@ -426,9 +400,6 @@ export default function CreateCustomerPage() {
                                 <FormControl
                                     isInvalid={
                                         !!errors?.Address?.longitude?.message
-                                    }
-                                    errortext={
-                                        errors?.Address?.longitude?.message
                                     }
                                     id="longitude"
                                     isRequired

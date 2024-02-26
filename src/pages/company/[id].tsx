@@ -31,7 +31,7 @@ const schema = yup.object().shape({
     email: yup.string().required().min(3).max(250).email(),
     description: yup.string().required().min(3).max(250),
     phoneNumber: yup.string().required().min(3).max(80),
-    idcompanyAddress: yup.string().required().min(3).max(80),
+    idCompanyAddress: yup.string().required().min(3).max(80),
     id: yup.string().required().min(3).max(80),
     companyAddress: yup.object({
         street: yup.string().required().min(3).max(80),
@@ -145,7 +145,6 @@ export default function EditCompanyPage() {
                                     </Heading>
                                     <FormControl
                                         isInvalid={!!errors?.id?.message}
-                                        errortext={errors?.id?.message}
                                         id="id"
                                         isRequired
                                         hidden
@@ -165,10 +164,7 @@ export default function EditCompanyPage() {
                                     </FormControl>
                                     <FormControl
                                         isInvalid={
-                                            !!errors?.idcompanyAddress?.message
-                                        }
-                                        errortext={
-                                            errors?.idcompanyAddress?.message
+                                            !!errors?.idCompanyAddress?.message
                                         }
                                         id="idcompanyAddress"
                                         isRequired
@@ -178,18 +174,17 @@ export default function EditCompanyPage() {
                                         <Input
                                             type="text"
                                             placeholder="idcompanyAddress"
-                                            {...register('idcompanyAddress', {
+                                            {...register('idCompanyAddress', {
                                                 required: 'Required',
                                             })}
-                                            value={company.idcompanyAddress}
+                                            value={company.idCompanyAddress}
                                         />
                                         <FormErrorMessage>
-                                            {errors?.idcompanyAddress?.message}
+                                            {errors?.idCompanyAddress?.message}
                                         </FormErrorMessage>
                                     </FormControl>
                                     <FormControl
                                         isInvalid={!!errors?.name?.message}
-                                        errortext={errors?.name?.message}
                                         id="name"
                                         isRequired
                                     >
@@ -208,7 +203,6 @@ export default function EditCompanyPage() {
                                     </FormControl>
                                     <FormControl
                                         isInvalid={!!errors?.docId?.message}
-                                        errortext={errors?.docId?.message}
                                         id="docId"
                                         isRequired
                                     >
@@ -227,7 +221,6 @@ export default function EditCompanyPage() {
                                     </FormControl>
                                     <FormControl
                                         isInvalid={!!errors?.email?.message}
-                                        errortext={errors?.email?.message}
                                         id="email"
                                         isRequired
                                     >
@@ -248,7 +241,6 @@ export default function EditCompanyPage() {
                                         isInvalid={
                                             !!errors?.description?.message
                                         }
-                                        errortext={errors?.description?.message}
                                         id="description"
                                         isRequired
                                     >
@@ -269,7 +261,6 @@ export default function EditCompanyPage() {
                                         isInvalid={
                                             !!errors?.phoneNumber?.message
                                         }
-                                        errortext={errors?.phoneNumber?.message}
                                         id="phoneNumber"
                                         isRequired
                                     >
@@ -304,10 +295,6 @@ export default function EditCompanyPage() {
                                             !!errors?.companyAddress?.street
                                                 ?.message
                                         }
-                                        errortext={
-                                            errors?.companyAddress?.street
-                                                ?.message
-                                        }
                                         id="street"
                                         isRequired
                                     >
@@ -337,10 +324,6 @@ export default function EditCompanyPage() {
                                             !!errors?.companyAddress?.number
                                                 ?.message
                                         }
-                                        errortext={
-                                            errors?.companyAddress?.number
-                                                ?.message
-                                        }
                                         id="number"
                                         isRequired
                                     >
@@ -368,10 +351,6 @@ export default function EditCompanyPage() {
                                     <FormControl
                                         isInvalid={
                                             !!errors?.companyAddress?.complement
-                                                ?.message
-                                        }
-                                        errortext={
-                                            errors?.companyAddress?.complement
                                                 ?.message
                                         }
                                         id="complement"
@@ -404,10 +383,6 @@ export default function EditCompanyPage() {
                                             !!errors?.companyAddress
                                                 ?.neighborhood?.message
                                         }
-                                        errortext={
-                                            errors?.companyAddress?.neighborhood
-                                                ?.message
-                                        }
                                         id="neighborhood"
                                         isRequired
                                     >
@@ -436,10 +411,6 @@ export default function EditCompanyPage() {
                                     <FormControl
                                         isInvalid={
                                             !!errors?.companyAddress?.district
-                                                ?.message
-                                        }
-                                        errortext={
-                                            errors?.companyAddress?.district
                                                 ?.message
                                         }
                                         id="district"
@@ -483,10 +454,6 @@ export default function EditCompanyPage() {
                                             !!errors?.companyAddress?.city
                                                 ?.message
                                         }
-                                        errortext={
-                                            errors?.companyAddress?.city
-                                                ?.message
-                                        }
                                         id="city"
                                         isRequired
                                     >
@@ -512,10 +479,6 @@ export default function EditCompanyPage() {
                                     <FormControl
                                         isInvalid={
                                             !!errors?.companyAddress?.county
-                                                ?.message
-                                        }
-                                        errortext={
-                                            errors?.companyAddress?.county
                                                 ?.message
                                         }
                                         id="county"
@@ -547,10 +510,6 @@ export default function EditCompanyPage() {
                                             !!errors?.companyAddress?.zipCode
                                                 ?.message
                                         }
-                                        errortext={
-                                            errors?.companyAddress?.zipCode
-                                                ?.message
-                                        }
                                         id="zipCode"
                                         isRequired
                                     >
@@ -580,10 +539,6 @@ export default function EditCompanyPage() {
                                             !!errors?.companyAddress?.latitude
                                                 ?.message
                                         }
-                                        errortext={
-                                            errors?.companyAddress?.latitude
-                                                ?.message
-                                        }
                                         id="latitude"
                                         isRequired
                                     >
@@ -611,10 +566,6 @@ export default function EditCompanyPage() {
                                     <FormControl
                                         isInvalid={
                                             !!errors?.companyAddress?.longitude
-                                                ?.message
-                                        }
-                                        errortext={
-                                            errors?.companyAddress?.longitude
                                                 ?.message
                                         }
                                         id="longitude"
