@@ -1,7 +1,7 @@
 import NextAuth from 'next-auth';
 import type { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { signIn } from '@/services/auth';
+import { signIn } from '@/services/authServices';
 
 const MINUTE = 60;
 const HOUR = 60 * MINUTE;

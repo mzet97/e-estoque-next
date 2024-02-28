@@ -11,9 +11,6 @@ import {
     useColorModeValue,
 } from '@chakra-ui/react';
 import { ReactNode } from 'react';
-import { BsPerson } from 'react-icons/bs';
-import { FiServer } from 'react-icons/fi';
-import { GoLocation } from 'react-icons/go';
 import { FaBox } from 'react-icons/fa';
 import { IoBagHandle } from 'react-icons/io5';
 import { GoPersonFill } from 'react-icons/go';

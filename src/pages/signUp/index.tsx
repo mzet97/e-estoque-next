@@ -26,7 +26,7 @@ import {
 import { useState } from 'react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import UserRegister from '@/models/auth/UserRegister';
-import { signUp } from '@/services/auth';
+import { signUp } from '@/services/authServices';
 
 const schema = yup.object().shape({
     username: yup.string().required('Username is required'),
@@ -69,7 +69,7 @@ export default function SignUp() {
                 isClosable: true,
             });
 
-            router.push('/dashboard');
+            router.push('/');
         } catch (err) {
             toast({
                 title: 'Failure singUp.',

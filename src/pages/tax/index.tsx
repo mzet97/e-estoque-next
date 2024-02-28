@@ -1,6 +1,7 @@
 import canAccess from '@/components/CanAccess/CanAccess';
 import Tax from '@/models/Tax/Tax';
 import { api } from '@/services/apiClient';
+import { findAllTaxs } from '@/services/taxServices';
 import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
 import {
     Table,
@@ -22,22 +23,23 @@ import {
     useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 function TaxPage() {
     const toast = useToast();
     const router = useRouter();
     const [taxs, setTaxs] = useState<Tax[]>([]);
 
-    useEffect(() => {
-        api.get(`Tax`).then(response => {
-            console.log('effect', response.data);
-            response.data.data.forEach((tax: Tax) => {
-                taxs.push(tax);
-                setTaxs([...taxs]);
-            });
-        });
+    const getData = useCallback(async () => {
+        const reuslt = await findAllTaxs();
+        if (reuslt) {
+            setTaxs([...reuslt]);
+        }
     }, []);
+
+    useEffect(() => {
+        getData();
+    }, [getData]);
 
     const handleDelete = (id: string) => {
         api.delete(`Tax/${id}`)

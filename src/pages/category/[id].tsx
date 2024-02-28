@@ -19,7 +19,8 @@ import {
 } from '@chakra-ui/react';
 import { api } from '@/services/apiClient';
 import EditCategory from '@/models/category/EditCategory';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { findCategoryById } from '@/services/categoriesServices';
 
 const schema = yup.object().shape({
     id: yup.string().required(),
@@ -68,14 +69,22 @@ export default function EditCategoryPage() {
         }
     };
 
-    useEffect(() => {
+    const getData = useCallback(async () => {
         const { id } = queryRouter.query;
         if (id) {
-            api.get(`Category/${id}`).then(response => {
-                setCategory(response.data);
-            });
+            const entity = await findCategoryById(id + '');
+
+            if (entity) {
+                setCategory(entity);
+            }
+        } else {
+            router.push('/tax');
         }
-    }, []);
+    }, [queryRouter.query, router]);
+
+    useEffect(() => {
+        getData();
+    }, [getData]);
 
     return (
         <Container>

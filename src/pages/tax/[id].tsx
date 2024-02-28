@@ -19,10 +19,12 @@ import {
 } from '@chakra-ui/react';
 import { api } from '@/services/apiClient';
 import CreateTax from '@/models/Tax/CreateTax';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter as useQueryRouter } from 'next/router';
 import Category from '@/models/category/Category';
 import EditTax from '@/models/Tax/EditTax';
+import { findTaxById } from '@/services/taxServices';
+import { findAllCategories } from '@/services/categoriesServices';
 
 const schema = yup.object().shape({
     name: yup.string().required().min(3).max(80),
@@ -73,22 +75,28 @@ export default function EditTaxPage() {
         }
     };
 
-    useEffect(() => {
+    const getData = useCallback(async () => {
         const { id } = queryRouter.query;
         if (id) {
-            api.get(`tax/${id}`).then(response => {
-                setTax(response.data);
-            });
-        }
+            const entity = await findTaxById(id + '');
 
-        api.get(`Category`).then(response => {
-            console.log('effect', response.data);
-            response.data.data.forEach((category: Category) => {
-                categories.push(category);
-                setCategories([...categories]);
-            });
-        });
-    }, []);
+            if (entity) {
+                setTax(entity);
+            }
+
+            const respCategories = await findAllCategories();
+
+            if (respCategories) {
+                setCategories([...respCategories]);
+            }
+        } else {
+            router.push('/tax');
+        }
+    }, [queryRouter.query, router]);
+
+    useEffect(() => {
+        getData();
+    }, [getData]);
 
     return (
         <Container>
@@ -166,7 +174,6 @@ export default function EditTaxPage() {
                                 isInvalid={!!errors?.percentage?.message}
                                 id="name"
                                 isRequired
-                                value={tax.percentage}
                             >
                                 <FormLabel>Percentage</FormLabel>
                                 <Input
@@ -175,6 +182,7 @@ export default function EditTaxPage() {
                                     {...register('percentage', {
                                         required: 'Required',
                                     })}
+                                    value={tax.percentage}
                                 />
                                 <FormErrorMessage>
                                     {errors?.percentage?.message}

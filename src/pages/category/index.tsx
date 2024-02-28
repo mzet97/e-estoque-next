@@ -1,6 +1,7 @@
 import canAccess from '@/components/CanAccess/CanAccess';
 import Category from '@/models/category/Category';
 import { api } from '@/services/apiClient';
+import { findAllCategories } from '@/services/categoriesServices';
 import { DeleteIcon, EditIcon, SearchIcon } from '@chakra-ui/icons';
 import {
     Table,
@@ -24,22 +25,23 @@ import {
     useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 function CategoryPage() {
     const toast = useToast();
     const router = useRouter();
     const [categories, setCategories] = useState<Category[]>([]);
 
-    useEffect(() => {
-        api.get(`Category`).then(response => {
-            console.log('effect', response.data);
-            response.data.data.forEach((category: Category) => {
-                categories.push(category);
-                setCategories([...categories]);
-            });
-        });
+    const getData = useCallback(async () => {
+        const reuslt = await findAllCategories();
+        if (reuslt) {
+            setCategories([...reuslt]);
+        }
     }, []);
+
+    useEffect(() => {
+        getData();
+    }, [getData]);
 
     const handleDelete = (id: string) => {
         api.delete(`Category/${id}`)

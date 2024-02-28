@@ -1,6 +1,7 @@
 import canAccess from '@/components/CanAccess/CanAccess';
 import Customer from '@/models/Customer/Customer';
 import { api } from '@/services/apiClient';
+import { findAllCustomers } from '@/services/customersServices';
 import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
 import {
     Table,
@@ -22,22 +23,23 @@ import {
     useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 function CustomerPage() {
     const toast = useToast();
     const router = useRouter();
     const [customers, setCustomers] = useState<Customer[]>([]);
 
-    useEffect(() => {
-        api.get(`Customer`).then(response => {
-            console.log('effect', response.data);
-            response.data.data.forEach((customer: Customer) => {
-                customers.push(customer);
-                setCustomers([...customers]);
-            });
-        });
+    const getData = useCallback(async () => {
+        const reuslt = await findAllCustomers();
+        if (reuslt) {
+            setCustomers([...reuslt]);
+        }
     }, []);
+
+    useEffect(() => {
+        getData();
+    }, [getData]);
 
     const handleDelete = (id: string) => {
         api.delete(`Customer/${id}`)

@@ -1,6 +1,7 @@
 import canAccess from '@/components/CanAccess/CanAccess';
 import Company from '@/models/Company/Company';
 import { api } from '@/services/apiClient';
+import { findAllCompanies } from '@/services/companiesServices';
 import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
 import {
     Table,
@@ -22,22 +23,23 @@ import {
     useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 function CompanyPage() {
     const toast = useToast();
     const router = useRouter();
     const [companies, setCompanies] = useState<Company[]>([]);
 
-    useEffect(() => {
-        api.get(`Company`).then(response => {
-            console.log('effect', response.data);
-            response.data.data.forEach((company: Company) => {
-                companies.push(company);
-                setCompanies([...companies]);
-            });
-        });
+    const getData = useCallback(async () => {
+        const reuslt = await findAllCompanies();
+        if (reuslt) {
+            setCompanies([...reuslt]);
+        }
     }, []);
+
+    useEffect(() => {
+        getData();
+    }, [getData]);
 
     const handleDelete = (id: string) => {
         api.delete(`Company/${id}`)

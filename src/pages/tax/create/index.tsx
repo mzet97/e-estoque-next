@@ -17,8 +17,9 @@ import {
 } from '@chakra-ui/react';
 import { api } from '@/services/apiClient';
 import CreateTax from '@/models/Tax/CreateTax';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Category from '@/models/category/Category';
+import { findAllCategories } from '@/services/categoriesServices';
 
 const schema = yup.object().shape({
     name: yup.string().required().min(3).max(80),
@@ -66,15 +67,17 @@ export default function CreateTaxPage() {
         }
     };
 
-    useEffect(() => {
-        api.get(`Category`).then(response => {
-            console.log('effect', response.data);
-            response.data.data.forEach((category: Category) => {
-                categories.push(category);
-                setCategories([...categories]);
-            });
-        });
+    const getData = useCallback(async () => {
+        const result = await findAllCategories();
+
+        if (result) {
+            setCategories([...result]);
+        }
     }, []);
+
+    useEffect(() => {
+        getData();
+    }, [getData]);
 
     return (
         <Container>

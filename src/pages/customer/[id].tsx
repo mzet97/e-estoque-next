@@ -22,8 +22,9 @@ import {
 } from '@chakra-ui/react';
 import { api } from '@/services/apiClient';
 import EditCustomer from '@/models/Customer/EditCustomer';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter as useQueryRouter } from 'next/router';
+import { findEditCustomerById } from '@/services/customersServices';
 
 const schema = yup.object().shape({
     name: yup.string().required().min(3).max(80),
@@ -60,6 +61,8 @@ export default function EditCustomerPage() {
     const toast = useToast();
     const router = useRouter();
     const queryRouter = useQueryRouter();
+    const useColorWhite = useColorModeValue('white', 'gray.700');
+    const useColorGray = useColorModeValue('gray.50', 'gray.800');
     const [customer, setCustomer] = useState<EditCustomer>();
 
     const onSubmit = async (values: EditCustomer) => {
@@ -87,15 +90,18 @@ export default function EditCustomerPage() {
         }
     };
 
-    useEffect(() => {
+    const getData = useCallback(async () => {
         const { id } = queryRouter.query;
-        if (id) {
-            api.get(`Customer/${id}`).then(response => {
-                setCustomer(response.data);
-                console.log('response', response.data);
-            });
+        const result = await findEditCustomerById(id + '');
+
+        if (result) {
+            setCustomer(result);
         }
-    }, []);
+    }, [queryRouter.query]);
+
+    useEffect(() => {
+        getData();
+    }, [getData]);
 
     return (
         <Flex
@@ -103,7 +109,7 @@ export default function EditCustomerPage() {
             align={'center'}
             justify={'center'}
             p={5}
-            bg={useColorModeValue('gray.50', 'gray.800')}
+            bg={useColorGray}
         >
             {!customer ? (
                 <Container>
@@ -117,7 +123,7 @@ export default function EditCustomerPage() {
                     </Heading>
                     <Box
                         rounded={'2xl'}
-                        bg={useColorModeValue('white', 'gray.700')}
+                        bg={useColorWhite}
                         boxShadow={'2xl'}
                         p={10}
                         w="100%"
