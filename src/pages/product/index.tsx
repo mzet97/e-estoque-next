@@ -1,8 +1,8 @@
 import canAccess from '@/components/CanAccess/CanAccess';
-import Company from '@/models/Company/Company';
+import Product from '@/models/Product/Product';
 import PagedResult from '@/models/Result/PagedResult';
 import { api } from '@/services/apiClient';
-import { findAllCompanies } from '@/services/companiesServices';
+import { findAllProducts } from '@/services/productsServices';
 import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
 import {
     Table,
@@ -26,16 +26,16 @@ import {
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 
-function CompanyPage() {
+function ProductPage() {
     const toast = useToast();
     const router = useRouter();
-    const [companies, setCompanies] = useState<Company[]>([]);
+    const [products, setProducts] = useState<Product[]>([]);
     const [pagedResult, setPagedResult] = useState<PagedResult>();
 
     const getData = useCallback(async () => {
-        const reuslt = await findAllCompanies();
+        const reuslt = await findAllProducts();
         if (reuslt) {
-            setCompanies([...reuslt.data]);
+            setProducts([...(reuslt.data as Product[])]);
             setPagedResult(reuslt.pagedResult);
         }
     }, []);
@@ -45,21 +45,21 @@ function CompanyPage() {
     }, [getData]);
 
     const handleDelete = (id: string) => {
-        api.delete(`Company/${id}`)
+        api.delete(`Product/${id}`)
             .then(response => {
                 toast({
-                    title: 'Success delte company.',
-                    description: 'Company delte with success.',
+                    title: 'Success delte product.',
+                    description: 'Product delte with success.',
                     status: 'success',
                     duration: 9000,
                     isClosable: true,
                 });
-                router.push('/company/');
+                router.push('/product/');
             })
             .catch(err => {
                 toast({
-                    title: 'Failure to delte a company.',
-                    description: 'Error to delte a company.',
+                    title: 'Failure to delte a product.',
+                    description: 'Error to delte a product.',
                     status: 'error',
                     duration: 9000,
                     isClosable: true,
@@ -67,11 +67,11 @@ function CompanyPage() {
             });
     };
     const handleEdit = (id: string) => {
-        router.push('/company/' + id);
+        router.push('/product/' + id);
     };
 
     const handleCreate = () => {
-        router.push('/company/create');
+        router.push('/product/create');
     };
 
     return (
@@ -79,14 +79,14 @@ function CompanyPage() {
             <Stack padding={10}>
                 <HStack alignItems="center" justifyContent="space-between">
                     <Heading as="h1" size="xl">
-                        List of companies
+                        List of Products
                     </Heading>
                     <Button colorScheme="green" onClick={() => handleCreate()}>
-                        Create a new company
+                        Create a new Product
                     </Button>
                 </HStack>
 
-                {companies.length === 0 ? (
+                {products.length === 0 ? (
                     <Container>
                         <Text>Loading...</Text>
                         <Spinner size="xl" />
@@ -102,19 +102,28 @@ function CompanyPage() {
                                     <Text>Name</Text>
                                 </Th>
                                 <Th>
-                                    <Text>DocId</Text>
-                                </Th>
-                                <Th>
-                                    <Text>Email</Text>
-                                </Th>
-                                <Th>
                                     <Text>Description</Text>
                                 </Th>
                                 <Th>
-                                    <Text>phoneNumber</Text>
+                                    <Text>Short Description</Text>
                                 </Th>
                                 <Th>
-                                    <Text>idCompanyAddress</Text>
+                                    <Text>Price</Text>
+                                </Th>
+                                <Th>
+                                    <Text>Weight</Text>
+                                </Th>
+                                <Th>
+                                    <Text>Height</Text>
+                                </Th>
+                                <Th>
+                                    <Text>Length</Text>
+                                </Th>
+                                <Th>
+                                    <Text>Category</Text>
+                                </Th>
+                                <Th>
+                                    <Text>Company</Text>
                                 </Th>
                                 <Th>
                                     <Text>Created Date</Text>
@@ -131,47 +140,50 @@ function CompanyPage() {
                             </Tr>
                         </Thead>
                         <Tbody>
-                            {companies.map(company => {
+                            {products.map(product => {
                                 return (
-                                    <Tr key={company.id}>
-                                        <Td>{company.id}</Td>
-                                        <Td>{company.name}</Td>
-                                        <Td>{company.docId}</Td>
-                                        <Td>{company.email}</Td>
-                                        <Td>{company.description}</Td>
-                                        <Td>{company.phoneNumber}</Td>
-                                        <Td>{company.idCompanyAddress}</Td>
-                                        <Td>{company.createdAt}</Td>
-                                        <Td>{company.updatedAt}</Td>
-                                        <Td>{company.deletedAt}</Td>
+                                    <Tr key={product.id}>
+                                        <Td>{product.id}</Td>
+                                        <Td>{product.name}</Td>
+                                        <Td>{product.description}</Td>
+                                        <Td>{product.shortDescription}</Td>
+                                        <Td>{product.price}</Td>
+                                        <Td>{product.weight}</Td>
+                                        <Td>{product.height}</Td>
+                                        <Td>{product.length}</Td>
+                                        <Td>{product.category.name}</Td>
+                                        <Td>{product.company.name}</Td>
+                                        <Td>{product.createdAt}</Td>
+                                        <Td>{product.updatedAt}</Td>
+                                        <Td>{product.deletedAt}</Td>
                                         <Td>
                                             <HStack padding={5} align="center">
                                                 <Tooltip
                                                     hasArrow
-                                                    label="Edit category"
+                                                    label="Edit product"
                                                 >
                                                     <IconButton
                                                         colorScheme="blue"
-                                                        aria-label="Edit category"
+                                                        aria-label="Edit product"
                                                         icon={<EditIcon />}
                                                         onClick={() =>
                                                             handleEdit(
-                                                                company.id,
+                                                                product.id,
                                                             )
                                                         }
                                                     />
                                                 </Tooltip>
                                                 <Tooltip
                                                     hasArrow
-                                                    label="Delete category"
+                                                    label="Delete product"
                                                 >
                                                     <IconButton
                                                         colorScheme="red"
-                                                        aria-label="Delete category"
+                                                        aria-label="Delete product"
                                                         icon={<DeleteIcon />}
                                                         onClick={() =>
                                                             handleDelete(
-                                                                company.id,
+                                                                product.id,
                                                             )
                                                         }
                                                     />
@@ -191,19 +203,28 @@ function CompanyPage() {
                                     <Text>Name</Text>
                                 </Th>
                                 <Th>
-                                    <Text>DocId</Text>
-                                </Th>
-                                <Th>
-                                    <Text>Email</Text>
-                                </Th>
-                                <Th>
                                     <Text>Description</Text>
                                 </Th>
                                 <Th>
-                                    <Text>phoneNumber</Text>
+                                    <Text>Short Description</Text>
                                 </Th>
                                 <Th>
-                                    <Text>idCompanyAddress</Text>
+                                    <Text>Price</Text>
+                                </Th>
+                                <Th>
+                                    <Text>Weight</Text>
+                                </Th>
+                                <Th>
+                                    <Text>Height</Text>
+                                </Th>
+                                <Th>
+                                    <Text>Length</Text>
+                                </Th>
+                                <Th>
+                                    <Text>Category</Text>
+                                </Th>
+                                <Th>
+                                    <Text>Company</Text>
                                 </Th>
                                 <Th>
                                     <Text>Created Date</Text>
@@ -234,4 +255,4 @@ function CompanyPage() {
     );
 }
 
-export default canAccess(CompanyPage);
+export default canAccess(ProductPage);

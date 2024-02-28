@@ -1,4 +1,5 @@
 import canAccess from '@/components/CanAccess/CanAccess';
+import PagedResult from '@/models/Result/PagedResult';
 import Tax from '@/models/Tax/Tax';
 import { api } from '@/services/apiClient';
 import { findAllTaxs } from '@/services/taxServices';
@@ -29,11 +30,13 @@ function TaxPage() {
     const toast = useToast();
     const router = useRouter();
     const [taxs, setTaxs] = useState<Tax[]>([]);
+    const [pagedResult, setPagedResult] = useState<PagedResult>();
 
     const getData = useCallback(async () => {
         const reuslt = await findAllTaxs();
         if (reuslt) {
-            setTaxs([...reuslt]);
+            setTaxs([...reuslt.data]);
+            setPagedResult(reuslt.pagedResult);
         }
     }, []);
 
@@ -105,7 +108,7 @@ function TaxPage() {
                                     <Text>Percentage</Text>
                                 </Th>
                                 <Th>
-                                    <Text>idCategory</Text>
+                                    <Text>Category</Text>
                                 </Th>
                                 <Th>
                                     <Text>Created Date</Text>
@@ -129,7 +132,7 @@ function TaxPage() {
                                         <Td>{tax.name}</Td>
                                         <Td>{tax.description}</Td>
                                         <Td>{tax.percentage}</Td>
-                                        <Td>{tax.idCategory}</Td>
+                                        <Td>{tax.category.name}</Td>
                                         <Td>{tax.createdAt}</Td>
                                         <Td>{tax.updatedAt}</Td>
                                         <Td>{tax.deletedAt}</Td>
@@ -182,7 +185,7 @@ function TaxPage() {
                                     <Text>Percentage</Text>
                                 </Th>
                                 <Th>
-                                    <Text>idCategory</Text>
+                                    <Text>Category</Text>
                                 </Th>
                                 <Th>
                                     <Text>Created Date</Text>
@@ -200,6 +203,14 @@ function TaxPage() {
                         </Tfoot>
                     </Table>
                 )}
+                <HStack>
+                    <Text>Current page {pagedResult?.currentPage}</Text>
+                    <Text>Page count {pagedResult?.pageCount}</Text>
+                    <Text>Page size {pagedResult?.pageSize}</Text>
+                    <Text>Row count {pagedResult?.rowCount}</Text>
+                    <Text>Frist page {pagedResult?.firstRowOnPage}</Text>
+                    <Text>Last page {pagedResult?.lastRowOnPage}</Text>
+                </HStack>
             </Stack>
         </>
     );

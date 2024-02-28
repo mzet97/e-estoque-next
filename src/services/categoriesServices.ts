@@ -1,15 +1,13 @@
 import Category from '@/models/category/Category';
 import { api } from './apiClient';
+import DataResult from '@/models/Result/DataResult';
 
-export async function findAllCategories(): Promise<Category[]> {
-    const temp: Category[] = [];
+export async function findAllCategories(): Promise<DataResult<Category>> {
     const response = await api.get(`Category`);
 
-    response.data.data.forEach((category: Category) => {
-        temp.push(category);
-    });
+    const data: DataResult<Category> = response.data;
 
-    return Promise.resolve(temp);
+    return Promise.resolve(data);
 }
 
 export async function findCategoryById(id: string): Promise<Category> {

@@ -1,5 +1,6 @@
 import canAccess from '@/components/CanAccess/CanAccess';
 import Customer from '@/models/Customer/Customer';
+import PagedResult from '@/models/Result/PagedResult';
 import { api } from '@/services/apiClient';
 import { findAllCustomers } from '@/services/customersServices';
 import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
@@ -29,11 +30,13 @@ function CustomerPage() {
     const toast = useToast();
     const router = useRouter();
     const [customers, setCustomers] = useState<Customer[]>([]);
+    const [pagedResult, setPagedResult] = useState<PagedResult>();
 
     const getData = useCallback(async () => {
         const reuslt = await findAllCustomers();
         if (reuslt) {
-            setCustomers([...reuslt]);
+            setCustomers([...reuslt.data]);
+            setPagedResult(reuslt.pagedResult);
         }
     }, []);
 
@@ -218,6 +221,14 @@ function CustomerPage() {
                         </Tfoot>
                     </Table>
                 )}
+                <HStack>
+                    <Text>Current page {pagedResult?.currentPage}</Text>
+                    <Text>Page count {pagedResult?.pageCount}</Text>
+                    <Text>Page size {pagedResult?.pageSize}</Text>
+                    <Text>Row count {pagedResult?.rowCount}</Text>
+                    <Text>Frist page {pagedResult?.firstRowOnPage}</Text>
+                    <Text>Last page {pagedResult?.lastRowOnPage}</Text>
+                </HStack>
             </Stack>
         </>
     );

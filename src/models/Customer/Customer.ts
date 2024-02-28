@@ -5,7 +5,7 @@ type Customer = {
     description: string;
     phoneNumber: string;
     idCompanyAddress: string;
-    Address: {
+    customerAddress: {
         street: string;
         number: string;
         complement: string;

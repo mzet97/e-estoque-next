@@ -1,4 +1,5 @@
 import canAccess from '@/components/CanAccess/CanAccess';
+import PagedResult from '@/models/Result/PagedResult';
 import Category from '@/models/category/Category';
 import { api } from '@/services/apiClient';
 import { findAllCategories } from '@/services/categoriesServices';
@@ -31,11 +32,13 @@ function CategoryPage() {
     const toast = useToast();
     const router = useRouter();
     const [categories, setCategories] = useState<Category[]>([]);
+    const [pagedResult, setPagedResult] = useState<PagedResult>();
 
     const getData = useCallback(async () => {
         const reuslt = await findAllCategories();
         if (reuslt) {
-            setCategories([...reuslt]);
+            setCategories([...reuslt.data]);
+            setPagedResult(reuslt.pagedResult);
         }
     }, []);
 
@@ -199,6 +202,14 @@ function CategoryPage() {
                         </Tfoot>
                     </Table>
                 )}
+                <HStack>
+                    <Text>Current page {pagedResult?.currentPage}</Text>
+                    <Text>Page count {pagedResult?.pageCount}</Text>
+                    <Text>Page size {pagedResult?.pageSize}</Text>
+                    <Text>Row count {pagedResult?.rowCount}</Text>
+                    <Text>Frist page {pagedResult?.firstRowOnPage}</Text>
+                    <Text>Last page {pagedResult?.lastRowOnPage}</Text>
+                </HStack>
             </Stack>
         </>
     );

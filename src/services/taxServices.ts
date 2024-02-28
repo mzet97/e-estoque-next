@@ -1,15 +1,13 @@
 import Tax from '@/models/Tax/Tax';
 import { api } from './apiClient';
+import DataResult from '@/models/Result/DataResult';
 
-export async function findAllTaxs(): Promise<Tax[]> {
-    const temp: Tax[] = [];
+export async function findAllTaxs(): Promise<DataResult<Tax>> {
     const response = await api.get(`Tax`);
 
-    response.data.data.forEach((tax: Tax) => {
-        temp.push(tax);
-    });
+    const data: DataResult<Tax> = response.data;
 
-    return Promise.resolve(temp);
+    return Promise.resolve(data);
 }
 
 export async function findTaxById(id: string): Promise<Tax> {

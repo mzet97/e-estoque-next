@@ -5,7 +5,7 @@ type Company = {
     description: string;
     phoneNumber: string;
     idCompanyAddress: string;
-    Address: {
+    companyAddress: {
         street: string;
         number: string;
         complement: string;
