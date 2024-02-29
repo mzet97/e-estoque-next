@@ -1,26 +1,24 @@
 'use client';
 
 import {
-    Flex,
-    Box,
-    FormControl,
-    FormLabel,
-    Input,
-    Checkbox,
-    Stack,
+    Container,
+    Alert,
+    Snackbar,
     Button,
-    Heading,
-    Text,
-    useColorModeValue,
-    useToast,
-    FormErrorMessage,
-} from '@chakra-ui/react';
+    Box,
+    Stack,
+    TextField,
+    Typography,
+} from '@mui/material';
+
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/navigation';
 import UserLogin from '@/models/auth/UserLogin';
 import { signIn } from 'next-auth/react';
+import React from 'react';
+import styles from './styles.module.css';
 
 const schema = yup.object().shape({
     email: yup.string().required(),
@@ -36,10 +34,20 @@ const Login: React.FC = () => {
         mode: 'onBlur',
         resolver: yupResolver(schema),
     });
-
-    const toast = useToast();
+    const [isError, setIsError] = React.useState(false);
+    const [open, setOpen] = React.useState(false);
+    const [message, setMessage] = React.useState('Teste');
     const router = useRouter();
+    const handleClose = (
+        event?: React.SyntheticEvent | Event,
+        reason?: string,
+    ) => {
+        if (reason === 'clickaway') {
+            return;
+        }
 
+        setOpen(false);
+    };
     const onSubmit = async (values: UserLogin) => {
         try {
             console.log('input', values);
@@ -53,119 +61,108 @@ const Login: React.FC = () => {
             console.log('response', response);
 
             if (!response?.error) {
-                toast({
-                    title: 'Success login.',
-                    description: 'Can use the system',
-                    status: 'success',
-                    duration: 9000,
-                    isClosable: true,
-                });
+                setMessage('Success login.');
+                setIsError(false);
+                setOpen(true);
                 router.push('/dashboard');
             } else {
-                toast({
-                    title: 'Failure login.',
-                    description: 'Check password and e-mail',
-                    status: 'error',
-                    duration: 9000,
-                    isClosable: true,
-                });
+                setMessage('Failure login.');
+                setIsError(true);
+                setOpen(true);
             }
         } catch (err) {
-            toast({
-                title: 'Failure login.',
-                description: 'Check password and e-mail',
-                status: 'error',
-                duration: 9000,
-                isClosable: true,
-            });
+            setMessage('Failure login.');
+            setIsError(true);
+            setOpen(true);
         }
     };
 
     return (
-        <Flex
-            minH={'100vh'}
-            align={'center'}
-            justify={'center'}
-            bg={useColorModeValue('gray.50', 'gray.800')}
-        >
-            <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
-                <Stack align={'center'}>
-                    <Heading fontSize={'4xl'}>Sign in to your account</Heading>
-                </Stack>
-                <Box
-                    rounded={'lg'}
-                    bg={useColorModeValue('white', 'gray.700')}
-                    boxShadow={'lg'}
-                    p={8}
+        <>
+            <Box className={styles.boxCenter}>
+                <Stack
+                    direction="column"
+                    justifyContent="center"
+                    alignItems="center"
+                    spacing={2}
                 >
                     <form
-                        style={{ width: 350 }}
                         onSubmit={handleSubmit(onSubmit)}
+                        noValidate
+                        autoComplete="off"
                     >
-                        <Stack spacing={4}>
-                            <FormControl
-                                isInvalid={!!errors?.email?.message}
-                                id="username"
-                                isRequired
-                            >
-                                <FormLabel>Email</FormLabel>
-                                <Input
-                                    type="text"
-                                    placeholder="Email"
-                                    {...register('email', {
-                                        required: 'Required',
-                                    })}
-                                />
-                                <FormErrorMessage>
-                                    {errors?.email?.message}
-                                </FormErrorMessage>
-                            </FormControl>
-                            <FormControl
-                                isInvalid={!!errors?.password?.message}
-                                id="password"
-                            >
-                                <FormLabel>Password</FormLabel>
-                                <Input
-                                    type="password"
-                                    placeholder="Password"
-                                    {...register('password', {
-                                        required: 'Required',
-                                    })}
-                                />
-                                <FormErrorMessage>
-                                    {errors?.password?.message}
-                                </FormErrorMessage>
-                            </FormControl>
-                            <Stack spacing={10}>
-                                <Stack
-                                    direction={{ base: 'column', sm: 'row' }}
-                                    align={'start'}
-                                    justify={'space-between'}
+                        <Stack className={styles.Login}>
+                            <Box className={styles.boxItem}>
+                                <Typography
+                                    variant="h2"
+                                    component="h2"
+                                    sx={{ color: '#000' }}
                                 >
-                                    <Checkbox>Remember me</Checkbox>
-                                    <Text color={'blue.400'}>
-                                        Forgot password?
-                                    </Text>
-                                </Stack>
-                                <Button
-                                    bg={'blue.400'}
-                                    color={'white'}
-                                    _hover={{
-                                        bg: 'blue.500',
+                                    Login
+                                </Typography>
+                                <Typography
+                                    variant="subtitle1"
+                                    sx={{ color: '#000' }}
+                                >
+                                    Enter your email and password
+                                </Typography>
+                            </Box>
+                            <Box className={styles.boxItem}>
+                                <TextField
+                                    required
+                                    id="email"
+                                    label="Email"
+                                    variant="outlined"
+                                    type="email"
+                                    sx={{
+                                        input: { color: '#000' },
+                                        label: { color: '#000' },
                                     }}
-                                    onClick={handleSubmit(onSubmit)}
-                                    disabled={
-                                        !!errors.email || !!errors.password
-                                    }
+                                    {...register('email')}
+                                    error={!!errors.email}
+                                    helperText={errors.email?.message}
+                                />
+                            </Box>
+                            <Box className={styles.boxItem}>
+                                <TextField
+                                    required
+                                    id="password"
+                                    label="Password"
+                                    type="password"
+                                    sx={{
+                                        input: { color: '#000' },
+                                        label: { color: '#000' },
+                                    }}
+                                    {...register('password')}
+                                    error={!!errors.password}
+                                    helperText={errors.password?.message}
+                                />
+                            </Box>
+                            <Box className={styles.boxItem}>
+                                <Button
+                                    type="submit"
+                                    variant="contained"
+                                    color="primary"
                                 >
-                                    Sign in
+                                    Login
                                 </Button>
-                            </Stack>
+                            </Box>
                         </Stack>
                     </form>
-                </Box>
-            </Stack>
-        </Flex>
+                </Stack>
+            </Box>
+
+            <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+                <Alert
+                    onClose={handleClose}
+                    severity={isError ? 'error' : 'success'}
+                    variant="filled"
+                    sx={{ width: '100%' }}
+                >
+                    {message}
+                </Alert>
+            </Snackbar>
+        </>
     );
 };
 

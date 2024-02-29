@@ -1,13 +1,13 @@
-import { Link } from '@chakra-ui/next-js';
+import Link from 'next/link';
 
 export default function Home() {
     return (
         <>
             <div>Sobre!</div>
-            <Link href="/home" color="blue.400" _hover={{ color: 'blue.500' }}>
+            <Link href="/home" color="blue.400">
                 Home
             </Link>
-            <Link href="/" color="blue.400" _hover={{ color: 'blue.500' }}>
+            <Link href="/" color="blue.400">
                 Index
             </Link>
         </>

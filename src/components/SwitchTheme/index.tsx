@@ -1,22 +1,31 @@
-import { Button, useColorMode } from '@chakra-ui/react';
-import { MoonIcon, SunIcon } from '@chakra-ui/icons';
+import React from 'react';
+
+import { useTheme, ThemeProvider, createTheme } from '@mui/material/styles';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
+import IconButton from '@mui/material/IconButton';
+import Box from '@mui/material/Box';
+
+export const ColorModeContext = React.createContext({
+    toggleColorMode: () => {},
+});
 
 export default function SwitchTheme() {
-    const { colorMode, toggleColorMode } = useColorMode();
-
+    const theme = useTheme();
+    const colorMode = React.useContext(ColorModeContext);
     return (
         <div>
-            <Button
-                colorScheme="teal"
-                variant="outline"
-                onClick={toggleColorMode}
+            <IconButton
+                sx={{ ml: 1 }}
+                onClick={colorMode.toggleColorMode}
+                color="inherit"
             >
-                {colorMode === 'light' ? (
-                    <MoonIcon boxSize={6} />
+                {theme.palette.mode === 'dark' ? (
+                    <Brightness7Icon />
                 ) : (
-                    <SunIcon boxSize={6} />
+                    <Brightness4Icon />
                 )}
-            </Button>
+            </IconButton>
         </div>
     );
 }

@@ -1,45 +1,33 @@
-import {
-    AspectRatio,
-    Box,
-    Center,
-    Heading,
-    StackDivider,
-    Text,
-    VStack,
-} from '@chakra-ui/react';
-import { Link } from '@chakra-ui/next-js';
-import styles from './styles.module.css';
+import Stack from '@mui/material/Stack';
 
-const Home = () => {
+import Button from '@mui/material/Button';
+import styles from './styles.module.css';
+import type { NextPage } from 'next';
+import Link from 'next/link';
+
+const Home: NextPage = () => {
     return (
         <div className={styles['box-center']}>
-            <VStack spacing={10} align="stretch" mt={10}>
-                <VStack align="center">
-                    <Box>
-                        <Heading>Internal management system</Heading>
-                    </Box>
-                </VStack>
-                <VStack align="center">
-                    <Box>
-                        <Heading>Do you have a account?</Heading>
-                    </Box>
-                    <Box>
-                        <Link href="/login">
-                            <Text fontSize="4xl">Login</Text>
-                        </Link>
-                    </Box>
-                </VStack>
-                <VStack align="center">
-                    <Box>
-                        <Heading>Or create a new account!</Heading>
-                    </Box>
-                    <Box>
-                        <Link href="/signUp">
-                            <Text fontSize="4xl">SingUp</Text>
-                        </Link>
-                    </Box>
-                </VStack>
-            </VStack>
+            <Stack
+                direction="column"
+                justifyContent="center"
+                alignItems="center"
+                spacing={2}
+            >
+                <h1>Internal management system</h1>
+                <h2>Do you have a account?</h2>
+                <Link href="/login">
+                    <Button variant="contained" color="primary">
+                        Login
+                    </Button>
+                </Link>
+                <h2>Or create a new account!</h2>
+                <Link href="/signUp">
+                    <Button variant="contained" color="secondary">
+                        SingUp
+                    </Button>
+                </Link>
+            </Stack>
         </div>
     );
 };

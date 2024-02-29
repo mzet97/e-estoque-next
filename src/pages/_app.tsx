@@ -1,15 +1,27 @@
-import { ColorModeScript } from '@chakra-ui/react';
 import type { AppProps } from 'next/app';
-import { Providers } from './providers';
+
+import CssBaseline from '@mui/material/CssBaseline';
+import { EmotionCache } from '@emotion/react';
 import Header from '@/components/Header';
+import createEmotionCache from '@/theme/createEmotionCache';
+import { Providers } from '@/components/helpers/providers';
 
-import theme from './theme';
+const clientSideEmotionCache = createEmotionCache();
 
-const MyApp = ({ Component, pageProps }: AppProps) => {
+interface MyAppProps extends AppProps {
+    emotionCache?: EmotionCache;
+}
+
+const MyApp = (props: MyAppProps) => {
+    const {
+        Component,
+        emotionCache = clientSideEmotionCache,
+        pageProps,
+    } = props;
     return (
-        <Providers>
-            <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+        <Providers emotionCache={emotionCache}>
             <Header />
+            <CssBaseline />
             <Component {...pageProps} />
         </Providers>
     );
