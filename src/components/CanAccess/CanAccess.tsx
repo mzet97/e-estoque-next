@@ -10,14 +10,13 @@ export default function canAccess(Component: any) {
         const router = useRouter();
         const { data: session } = useSession();
 
-        console.log('Session', session);
         useEffect(() => {
-            if (!!session?.user) {
+            if (!session?.user) {
                 return router.push('/');
             }
         }, []);
 
-        if (!!!session?.user) {
+        if (!session?.user) {
             return null;
         }
 

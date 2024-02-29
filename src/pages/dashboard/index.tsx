@@ -1,90 +1,39 @@
 'use client';
-
-import {
-    Box,
-    chakra,
-    Flex,
-    SimpleGrid,
-    Stat,
-    StatLabel,
-    StatNumber,
-    useColorModeValue,
-} from '@chakra-ui/react';
-import { ReactNode } from 'react';
-import { FaBox } from 'react-icons/fa';
-import { IoBagHandle } from 'react-icons/io5';
-import { GoPersonFill } from 'react-icons/go';
 import canAccess from '@/components/CanAccess/CanAccess';
-interface StatsCardProps {
-    title: string;
-    stat: string;
-    icon: ReactNode;
-}
-
-function StatsCard(props: StatsCardProps) {
-    const { title, stat, icon } = props;
-    return (
-        <Stat
-            px={{ base: 2, md: 4 }}
-            py={'5'}
-            shadow={'xl'}
-            border={'1px solid'}
-            borderColor={useColorModeValue('gray.800', 'gray.500')}
-            rounded={'lg'}
-        >
-            <Flex justifyContent={'space-between'}>
-                <Box pl={{ base: 2, md: 4 }}>
-                    <StatLabel fontWeight={'medium'} isTruncated>
-                        {title}
-                    </StatLabel>
-                    <StatNumber fontSize={'2xl'} fontWeight={'medium'}>
-                        {stat}
-                    </StatNumber>
-                </Box>
-                <Box
-                    my={'auto'}
-                    color={useColorModeValue('gray.800', 'gray.200')}
-                    alignContent={'center'}
-                >
-                    {icon}
-                </Box>
-            </Flex>
-        </Stat>
-    );
-}
+import CardStatus from '@/components/CardStatus/CardStatus';
+import { Box, Stack } from '@mui/material';
+import styles from './styles.module.css';
 
 function BasicStatistics() {
     return (
-        <Box maxW="7xl" mx={'auto'} pt={5} px={{ base: 2, sm: 12, md: 17 }}>
-            <chakra.h1
-                textAlign={'center'}
-                fontSize={'4xl'}
-                py={10}
-                fontWeight={'bold'}
+        <>
+            <Stack
+                direction="column"
+                spacing={2}
+                justifyContent="center"
+                alignItems="center"
+                sx={{ mt: '1rem' }}
             >
-                Our company is expanding, you could be too.
-            </chakra.h1>
-            <SimpleGrid
-                columns={{ base: 1, md: 3 }}
-                spacing={{ base: 5, lg: 8 }}
-            >
-                <StatsCard
-                    title={'Products'}
-                    stat={'10,000'}
-                    icon={<FaBox size={'3em'} />}
-                />
-                <StatsCard
-                    title={'Customers'}
-                    stat={'1,000'}
-                    icon={<GoPersonFill size={'3em'} />}
-                />
-                <StatsCard
-                    title={'Sales'}
-                    stat={'7'}
-                    icon={<IoBagHandle size={'3em'} />}
-                />
-            </SimpleGrid>
-        </Box>
+                <Box className={styles.boxCenter}>
+                    <Box className={styles.boxItem}>
+                        <h1>Basic Statistics</h1>
+                    </Box>
+                </Box>
+                <Stack
+                    direction="row"
+                    spacing={2}
+                    justifyContent="center"
+                    alignItems="center"
+                    sx={{ mt: '1rem' }}
+                >
+                    <CardStatus title="Prodcuts" subtitle="1000" />
+                    <CardStatus title="Companies" subtitle="1000" />
+                    <CardStatus title="Customers" subtitle="1000" />
+                    <CardStatus title="Inventories" subtitle="1000" />
+                    <CardStatus title="Sales" subtitle="1000" />
+                </Stack>
+            </Stack>
+        </>
     );
 }
 

@@ -1,32 +1,23 @@
 'use client';
-
+import React from 'react';
 import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-import {
-    Flex,
-    Box,
-    FormControl,
-    FormLabel,
-    Input,
-    InputGroup,
-    HStack,
-    InputRightElement,
-    Stack,
-    Button,
-    Heading,
-    Text,
-    useColorModeValue,
-    Link,
-    useToast,
-    FormErrorMessage,
-} from '@chakra-ui/react';
-import { useState } from 'react';
-import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import UserRegister from '@/models/auth/UserRegister';
 import { signUp } from '@/services/authServices';
+import {
+    Alert,
+    Box,
+    Button,
+    Snackbar,
+    Stack,
+    TextField,
+    Typography,
+} from '@mui/material';
+
+import styles from './styles.module.css';
 
 const schema = yup.object().shape({
     username: yup.string().required('Username is required'),
@@ -40,9 +31,24 @@ const schema = yup.object().shape({
     lastName: yup.string().max(80).required('Last name is required'),
 });
 
-export default function SignUp() {
-    const [showPassword, setShowPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+const SignUp: React.FC = () => {
+    const [showPassword, setShowPassword] = React.useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
+
+    const [isError, setIsError] = React.useState(false);
+    const [open, setOpen] = React.useState(false);
+    const [message, setMessage] = React.useState('Teste');
+
+    const handleClose = (
+        event?: React.SyntheticEvent | Event,
+        reason?: string,
+    ) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setOpen(false);
+    };
 
     const {
         register,
@@ -53,7 +59,6 @@ export default function SignUp() {
         resolver: yupResolver(schema),
     });
 
-    const toast = useToast();
     const router = useRouter();
 
     const onSubmit = async (values: UserRegister) => {
@@ -61,236 +66,179 @@ export default function SignUp() {
             console.log('input', values);
             await signUp(values);
 
-            toast({
-                title: 'Success singUp.',
-                description: 'Can use the system',
-                status: 'success',
-                duration: 9000,
-                isClosable: true,
-            });
+            setMessage('Success singUp.');
+            setIsError(false);
+            setOpen(true);
 
             router.push('/');
         } catch (err) {
-            toast({
-                title: 'Failure singUp.',
-                description: 'Check password and e-mail',
-                status: 'error',
-                duration: 9000,
-                isClosable: true,
-            });
+            setMessage('Failure singUp.');
+            setIsError(true);
+            setOpen(true);
         }
     };
 
     return (
-        <Flex
-            minH={'100vh'}
-            align={'center'}
-            justify={'center'}
-            bg={useColorModeValue('gray.50', 'gray.800')}
-        >
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <Stack spacing={8} mx={'auto'} maxW={'2xl'} py={1} px={1}>
-                    <Stack align={'center'}>
-                        <Heading fontSize={'4xl'} textAlign={'center'}>
-                            Sign up
-                        </Heading>
-                    </Stack>
-                    <Box
-                        rounded={'xl'}
-                        bg={useColorModeValue('white', 'gray.700')}
-                        boxShadow={'xl'}
-                        p={8}
+        <>
+            <Box className={styles.boxCenter}>
+                <form
+                    onSubmit={handleSubmit(onSubmit)}
+                    noValidate
+                    autoComplete="off"
+                >
+                    <Box className={styles.boxItem}>
+                        <Typography
+                            variant="h2"
+                            component="h2"
+                            sx={{ color: '#000' }}
+                        >
+                            SignUp
+                        </Typography>
+                        <Typography variant="subtitle1" sx={{ color: '#000' }}>
+                            Enter with your data
+                        </Typography>
+                    </Box>
+                    <Stack
+                        direction="row"
+                        justifyContent="center"
+                        alignItems="center"
+                        spacing={2}
                     >
-                        <Stack>
-                            <HStack spacing={4}>
-                                <Box>
-                                    <Text fontSize="2xl">Personal data</Text>
-                                </Box>
-                            </HStack>
-                            <HStack spacing={4}>
-                                <Box>
-                                    <FormControl
-                                        isInvalid={!!errors?.firstName?.message}
-                                        id="name"
-                                        isRequired
-                                    >
-                                        <FormLabel>First Name</FormLabel>
-                                        <Input
-                                            type="text"
-                                            placeholder="FirstName"
-                                            {...register('firstName', {
-                                                required: 'Required',
-                                            })}
-                                        />
-                                        <FormErrorMessage>
-                                            {errors?.firstName?.message}
-                                        </FormErrorMessage>
-                                    </FormControl>
-                                </Box>
-                                <Box>
-                                    <FormControl
-                                        isInvalid={!!errors?.lastName?.message}
-                                        id="lastName"
-                                        isRequired
-                                    >
-                                        <FormLabel>Last Name</FormLabel>
-                                        <Input
-                                            type="text"
-                                            placeholder="Last name"
-                                            {...register('lastName', {
-                                                required: 'Required',
-                                            })}
-                                        />
-                                        <FormErrorMessage>
-                                            {errors?.lastName?.message}
-                                        </FormErrorMessage>
-                                    </FormControl>
-                                </Box>
-                                <Box>
-                                    <FormControl
-                                        isInvalid={!!errors?.username?.message}
+                        <Stack
+                            direction="column"
+                            justifyContent="center"
+                            alignItems="center"
+                            spacing={2}
+                        >
+                            <Stack className={styles.Login}>
+                                <Box className={styles.boxItem}>
+                                    <TextField
+                                        required
                                         id="username"
-                                        isRequired
-                                    >
-                                        <FormLabel>Username</FormLabel>
-                                        <Input
-                                            type="text"
-                                            {...register('username', {
-                                                required: 'Required',
-                                            })}
-                                        />
-                                        <FormErrorMessage>
-                                            {errors?.username?.message}
-                                        </FormErrorMessage>
-                                    </FormControl>
-                                </Box>
-                            </HStack>
-                            <Stack spacing={4}>
-                                <FormControl
-                                    isInvalid={!!errors?.email?.message}
-                                    id="email"
-                                    isRequired
-                                >
-                                    <FormLabel>Email address</FormLabel>
-                                    <Input
-                                        type="email"
-                                        {...register('email', {
-                                            required: 'Required',
-                                        })}
-                                    />
-                                    <FormErrorMessage>
-                                        {errors?.email?.message}
-                                    </FormErrorMessage>
-                                </FormControl>
-                                <FormControl
-                                    isInvalid={!!errors?.password?.message}
-                                    id="password"
-                                    isRequired
-                                >
-                                    <FormLabel>Password</FormLabel>
-                                    <InputGroup>
-                                        <Input
-                                            type={
-                                                showPassword
-                                                    ? 'text'
-                                                    : 'password'
-                                            }
-                                            {...register('password', {
-                                                required: 'Required',
-                                            })}
-                                        />
-                                        <InputRightElement h={'full'}>
-                                            <Button
-                                                variant={'ghost'}
-                                                onClick={() =>
-                                                    setShowPassword(
-                                                        showPassword =>
-                                                            !showPassword,
-                                                    )
-                                                }
-                                            >
-                                                {showPassword ? (
-                                                    <ViewIcon />
-                                                ) : (
-                                                    <ViewOffIcon />
-                                                )}
-                                            </Button>
-                                        </InputRightElement>
-                                    </InputGroup>
-                                    <FormErrorMessage>
-                                        {errors?.password?.message}
-                                    </FormErrorMessage>
-                                </FormControl>
-                                <FormControl
-                                    isInvalid={
-                                        !!errors?.confirmPassword?.message
-                                    }
-                                    id="confirmPassword"
-                                    isRequired
-                                >
-                                    <FormLabel>Confirm Password</FormLabel>
-                                    <InputGroup>
-                                        <Input
-                                            type={
-                                                showConfirmPassword
-                                                    ? 'text'
-                                                    : 'password'
-                                            }
-                                            {...register('confirmPassword', {
-                                                required: 'Required',
-                                            })}
-                                        />
-                                        <InputRightElement h={'full'}>
-                                            <Button
-                                                variant={'ghost'}
-                                                onClick={() =>
-                                                    setShowConfirmPassword(
-                                                        showConfirmPassword =>
-                                                            !showConfirmPassword,
-                                                    )
-                                                }
-                                            >
-                                                {showConfirmPassword ? (
-                                                    <ViewIcon />
-                                                ) : (
-                                                    <ViewOffIcon />
-                                                )}
-                                            </Button>
-                                        </InputRightElement>
-                                    </InputGroup>
-                                    <FormErrorMessage>
-                                        {errors?.confirmPassword?.message}
-                                    </FormErrorMessage>
-                                </FormControl>
-                            </Stack>
-                            <Stack spacing={4}>
-                                <Stack spacing={10} pt={2}>
-                                    <Button
-                                        loadingText="Submitting"
-                                        size="lg"
-                                        bg={'blue.400'}
-                                        color={'white'}
-                                        _hover={{
-                                            bg: 'blue.500',
+                                        label="Username"
+                                        variant="outlined"
+                                        type="text"
+                                        sx={{
+                                            input: { color: '#000' },
+                                            label: { color: '#000' },
                                         }}
-                                        onClick={handleSubmit(onSubmit)}
-                                    >
-                                        Sign up
-                                    </Button>
-                                </Stack>
-                                <Stack pt={6}>
-                                    <Text align={'center'}>
-                                        Already a user?
-                                        <Link href="/login" color={'blue.400'}>
-                                            Login
-                                        </Link>
-                                    </Text>
-                                </Stack>
+                                        {...register('username')}
+                                        error={!!errors.username}
+                                        helperText={errors.username?.message}
+                                    />
+                                </Box>
+                                <Box className={styles.boxItem}>
+                                    <TextField
+                                        required
+                                        id="password"
+                                        label="Password"
+                                        type="password"
+                                        sx={{
+                                            input: { color: '#000' },
+                                            label: { color: '#000' },
+                                        }}
+                                        {...register('password')}
+                                        error={!!errors.password}
+                                        helperText={errors.password?.message}
+                                    />
+                                </Box>
+                                <Box className={styles.boxItem}>
+                                    <TextField
+                                        required
+                                        id="confirmPassword"
+                                        label="Confirm password"
+                                        type="password"
+                                        sx={{
+                                            input: { color: '#000' },
+                                            label: { color: '#000' },
+                                        }}
+                                        {...register('confirmPassword')}
+                                        error={!!errors.confirmPassword}
+                                        helperText={
+                                            errors.confirmPassword?.message
+                                        }
+                                    />
+                                </Box>
                             </Stack>
                         </Stack>
+                        <Stack
+                            direction="column"
+                            justifyContent="center"
+                            alignItems="center"
+                            spacing={2}
+                        >
+                            <Stack className={styles.Login}>
+                                <Box className={styles.boxItem}>
+                                    <TextField
+                                        required
+                                        id="email"
+                                        label="email"
+                                        variant="outlined"
+                                        type="email"
+                                        sx={{
+                                            input: { color: '#000' },
+                                            label: { color: '#000' },
+                                        }}
+                                        {...register('email')}
+                                        error={!!errors.email}
+                                        helperText={errors.email?.message}
+                                    />
+                                </Box>
+                                <Box className={styles.boxItem}>
+                                    <TextField
+                                        required
+                                        id="firstName"
+                                        label="First Name"
+                                        type="text"
+                                        sx={{
+                                            input: { color: '#000' },
+                                            label: { color: '#000' },
+                                        }}
+                                        {...register('firstName')}
+                                        error={!!errors.firstName}
+                                        helperText={errors.firstName?.message}
+                                    />
+                                </Box>
+                                <Box className={styles.boxItem}>
+                                    <TextField
+                                        required
+                                        id="lastName"
+                                        label="Last Name"
+                                        type="lastName"
+                                        sx={{
+                                            input: { color: '#000' },
+                                            label: { color: '#000' },
+                                        }}
+                                        {...register('lastName')}
+                                        error={!!errors.lastName}
+                                        helperText={errors.lastName?.message}
+                                    />
+                                </Box>
+                            </Stack>
+                        </Stack>
+                    </Stack>
+                    <Box className={styles.boxItem}>
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            color="secondary"
+                        >
+                            SignUp
+                        </Button>
                     </Box>
-                </Stack>
-            </form>
-        </Flex>
+                </form>
+            </Box>
+            <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+                <Alert
+                    onClose={handleClose}
+                    severity={isError ? 'error' : 'success'}
+                    variant="filled"
+                    sx={{ width: '100%' }}
+                >
+                    {message}
+                </Alert>
+            </Snackbar>
+        </>
     );
-}
+};
+export default SignUp;

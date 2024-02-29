@@ -10,7 +10,7 @@ export const ColorModeContext = React.createContext({
     toggleColorMode: () => {},
 });
 
-export default function SwitchTheme() {
+const SwitchTheme: React.FC = () => {
     const theme = useTheme();
     const colorMode = React.useContext(ColorModeContext);
     return (
@@ -28,4 +28,6 @@ export default function SwitchTheme() {
             </IconButton>
         </div>
     );
-}
+};
+
+export default SwitchTheme;

@@ -72,7 +72,7 @@ const getNavItems = (user: any): Array<NavItem> => {
     }
 };
 
-export default function Header() {
+const Header: React.FC = () => {
     const { data: session } = useSession();
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
         null,
@@ -244,4 +244,6 @@ export default function Header() {
             </Container>
         </AppBar>
     );
-}
+};
+
+export default Header;

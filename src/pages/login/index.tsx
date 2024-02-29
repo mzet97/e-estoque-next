@@ -1,5 +1,5 @@
 'use client';
-
+import React from 'react';
 import {
     Container,
     Alert,
@@ -17,7 +17,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/navigation';
 import UserLogin from '@/models/auth/UserLogin';
 import { signIn } from 'next-auth/react';
-import React from 'react';
+
 import styles from './styles.module.css';
 
 const schema = yup.object().shape({
@@ -34,10 +34,12 @@ const Login: React.FC = () => {
         mode: 'onBlur',
         resolver: yupResolver(schema),
     });
+
     const [isError, setIsError] = React.useState(false);
     const [open, setOpen] = React.useState(false);
     const [message, setMessage] = React.useState('Teste');
     const router = useRouter();
+
     const handleClose = (
         event?: React.SyntheticEvent | Event,
         reason?: string,
@@ -48,17 +50,14 @@ const Login: React.FC = () => {
 
         setOpen(false);
     };
+
     const onSubmit = async (values: UserLogin) => {
         try {
-            console.log('input', values);
-
             const response = await signIn('credentials', {
                 redirect: false,
                 email: values.email,
                 password: values.password,
             });
-
-            console.log('response', response);
 
             if (!response?.error) {
                 setMessage('Success login.');
@@ -142,7 +141,7 @@ const Login: React.FC = () => {
                                 <Button
                                     type="submit"
                                     variant="contained"
-                                    color="primary"
+                                    color="secondary"
                                 >
                                     Login
                                 </Button>
