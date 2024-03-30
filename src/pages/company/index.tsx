@@ -44,7 +44,7 @@ function CompanyPage() {
         { field: 'name', headerName: 'Name', width: 200 },
         { field: 'email', headerName: 'Email', width: 200 },
         { field: 'phoneNumber', headerName: 'PhoneNumber', width: 200 },
-        { field: 'phoneNumber', headerName: 'PhoneNumber', width: 200 },
+        { field: 'description', headerName: 'Description', width: 200 },
         {
             field: 'idCompanyAddress',
             headerName: 'IdCompanyAddress',

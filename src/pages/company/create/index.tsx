@@ -7,8 +7,8 @@ import { api } from '@/services/apiClient';
 import CreateCompany from '@/models/Company/CreateCompany';
 import SnackbarAlert from '@/components/SnackbarAlert/SnackbarAlert';
 import { Box, Button, Stack, TextField, Typography } from '@mui/material';
-import styles from './../styles.module.css';
 import { useState } from 'react';
+import styles from './../styles.module.css';
 
 const schema = yup.object().shape({
     name: yup.string().required().min(3).max(80),
