@@ -2,23 +2,13 @@ import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/navigation';
-import {
-    Box,
-    Button,
-    Flex,
-    FormControl,
-    FormErrorMessage,
-    FormLabel,
-    HStack,
-    Heading,
-    Input,
-    Stack,
-    Textarea,
-    useColorModeValue,
-    useToast,
-} from '@chakra-ui/react';
+
 import { api } from '@/services/apiClient';
 import CreateCompany from '@/models/Company/CreateCompany';
+import SnackbarAlert from '@/components/SnackbarAlert/SnackbarAlert';
+import { Box, Button, Stack, TextField, Typography } from '@mui/material';
+import styles from './../styles.module.css';
+import { useState } from 'react';
 
 const schema = yup.object().shape({
     name: yup.string().required().min(3).max(80),
@@ -50,398 +40,361 @@ export default function CreateCompanyPage() {
         resolver: yupResolver(schema),
     });
 
-    const toast = useToast();
     const router = useRouter();
+    const [isError, setIsError] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+    const [message, setMessage] = useState('Teste');
+
+    const handleClose = (
+        event?: React.SyntheticEvent | Event,
+        reason?: string,
+    ) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setIsOpen(false);
+    };
 
     const onSubmit = async (values: CreateCompany) => {
         try {
-            console.log('input', values);
             await api.post('Company', values);
 
-            toast({
-                title: 'Success a create company.',
-                description: 'Company created with success.',
-                status: 'success',
-                duration: 9000,
-                isClosable: true,
-            });
-
             router.push('/company');
-        } catch (err) {
-            toast({
-                title: 'Failure to create a company.',
-                description: 'Error to create a company.',
-                status: 'error',
-                duration: 9000,
-                isClosable: true,
-            });
-        }
+        } catch (err) {}
     };
 
     return (
-        <Flex
-            minH={'100vh'}
-            align={'center'}
-            justify={'center'}
-            p={5}
-            bg={useColorModeValue('gray.50', 'gray.800')}
-        >
-            <Stack spacing={10} mx={'auto'} maxW={'auto'}>
-                <Heading as="h1" size="xl">
-                    Create a new Company
-                </Heading>
-                <Box
-                    rounded={'2xl'}
-                    bg={useColorModeValue('white', 'gray.700')}
-                    boxShadow={'2xl'}
-                    p={10}
-                    w="100%"
-                    h="100%"
+        <>
+            <Box className={styles.boxCenter}>
+                <Stack
+                    direction="column"
+                    justifyContent="center"
+                    alignItems="center"
+                    spacing={2}
                 >
-                    <form onSubmit={handleSubmit(onSubmit)}>
-                        <HStack
-                            align="center"
-                            justify="center"
-                            alignContent="center"
-                            alignItems="baseline"
-                            spacing={1}
-                            padding={1}
-                        >
-                            <Stack
-                                align="center"
-                                justify="center"
-                                alignContent="center"
-                                alignItems="baseline"
-                                spacing={1}
-                                padding={1}
+                    <form
+                        onSubmit={handleSubmit(onSubmit)}
+                        noValidate
+                        autoComplete="off"
+                    >
+                        <Box className={styles.boxItem}>
+                            <Typography
+                                variant="h4"
+                                component="h4"
+                                sx={{ color: '#000' }}
                             >
-                                <Heading as="h2" size="md">
-                                    Base data
-                                </Heading>
-                                <FormControl
-                                    isInvalid={!!errors?.name?.message}
-                                    id="name"
-                                    isRequired
-                                >
-                                    <FormLabel>Name</FormLabel>
-                                    <Input
-                                        type="text"
-                                        placeholder="Name"
-                                        {...register('name', {
-                                            required: 'Required',
-                                        })}
-                                    />
-                                    <FormErrorMessage>
-                                        {errors?.name?.message}
-                                    </FormErrorMessage>
-                                </FormControl>
-                                <FormControl
-                                    isInvalid={!!errors?.docId?.message}
-                                    id="docId"
-                                    isRequired
-                                >
-                                    <FormLabel>DocId</FormLabel>
-                                    <Input
-                                        type="text"
-                                        placeholder="DocId"
-                                        {...register('docId', {
-                                            required: 'Required',
-                                        })}
-                                    />
-                                    <FormErrorMessage>
-                                        {errors?.docId?.message}
-                                    </FormErrorMessage>
-                                </FormControl>
-                                <FormControl
-                                    isInvalid={!!errors?.email?.message}
-                                    id="email"
-                                    isRequired
-                                >
-                                    <FormLabel>Email</FormLabel>
-                                    <Input
-                                        type="text"
-                                        placeholder="Email"
-                                        {...register('email', {
-                                            required: 'Required',
-                                        })}
-                                    />
-                                    <FormErrorMessage>
-                                        {errors?.email?.message}
-                                    </FormErrorMessage>
-                                </FormControl>
-                                <FormControl
-                                    isInvalid={!!errors?.description?.message}
-                                    id="description"
-                                    isRequired
-                                >
-                                    <FormLabel>Description</FormLabel>
-                                    <Textarea
-                                        placeholder="Description"
-                                        {...register('description', {
-                                            required: 'Required',
-                                        })}
-                                        size="sm"
-                                    />
-                                    <FormErrorMessage>
-                                        {errors?.description?.message}
-                                    </FormErrorMessage>
-                                </FormControl>
-                                <FormControl
-                                    isInvalid={!!errors?.phoneNumber?.message}
-                                    id="phoneNumber"
-                                    isRequired
-                                >
-                                    <FormLabel>Phone Number</FormLabel>
-                                    <Input
-                                        type="text"
-                                        placeholder="Phone Number"
-                                        {...register('phoneNumber', {
-                                            required: 'Required',
-                                        })}
-                                    />
-                                    <FormErrorMessage>
-                                        {errors?.phoneNumber?.message}
-                                    </FormErrorMessage>
-                                </FormControl>
-                            </Stack>
-                            <Stack
-                                align="center"
-                                justify="center"
-                                alignContent="center"
-                                alignItems="baseline"
-                                spacing={1}
-                                padding={1}
+                                Create a new Company
+                            </Typography>
+                            <Typography
+                                variant="subtitle1"
+                                sx={{ color: '#000' }}
                             >
-                                <Heading as="h2" size="md">
-                                    Company address
-                                </Heading>
-
-                                <FormControl
-                                    isInvalid={
-                                        !!errors?.Address?.street?.message
-                                    }
-                                    id="street"
-                                    isRequired
-                                >
-                                    <FormLabel>Street</FormLabel>
-                                    <Input
+                                Enter with data
+                            </Typography>
+                        </Box>
+                        <Stack direction="row">
+                            <Stack className={styles.Login}>
+                                <Box className={styles.boxItem}>
+                                    <TextField
+                                        focused
+                                        required
+                                        id="name"
+                                        label="Name"
+                                        variant="outlined"
                                         type="text"
-                                        placeholder="Street"
-                                        {...register('Address.street', {
-                                            required: 'Required',
-                                        })}
+                                        sx={{
+                                            input: { color: '#000' },
+                                            label: { color: '#000' },
+                                            width: '100%',
+                                        }}
+                                        {...register('name')}
+                                        error={!!errors.name}
+                                        helperText={errors.name?.message}
                                     />
-                                    <FormErrorMessage>
-                                        {errors?.Address?.street?.message}
-                                    </FormErrorMessage>
-                                </FormControl>
-                                <FormControl
-                                    isInvalid={
-                                        !!errors?.Address?.number?.message
-                                    }
-                                    id="number"
-                                    isRequired
-                                >
-                                    <FormLabel>Number</FormLabel>
-                                    <Input
+                                </Box>
+                                <Box className={styles.boxItem}>
+                                    <TextField
+                                        focused
+                                        required
+                                        id="docId"
+                                        label="DocId"
+                                        variant="outlined"
                                         type="text"
-                                        placeholder="Number"
-                                        {...register('Address.number', {
-                                            required: 'Required',
-                                        })}
+                                        sx={{
+                                            input: { color: '#000' },
+                                            label: { color: '#000' },
+                                            width: '100%',
+                                        }}
+                                        {...register('docId')}
+                                        error={!!errors.docId}
+                                        helperText={errors.docId?.message}
                                     />
-                                    <FormErrorMessage>
-                                        {errors?.Address?.number?.message}
-                                    </FormErrorMessage>
-                                </FormControl>
-                                <FormControl
-                                    isInvalid={
-                                        !!errors?.Address?.complement?.message
-                                    }
-                                    id="complement"
-                                    isRequired
-                                >
-                                    <FormLabel>Complement</FormLabel>
-                                    <Input
+                                </Box>
+                                <Box className={styles.boxItem}>
+                                    <TextField
+                                        focused
+                                        required
+                                        id="phoneNumber"
+                                        label="PhoneNumber"
+                                        variant="outlined"
                                         type="text"
-                                        placeholder="Complement"
-                                        {...register('Address.complement', {
-                                            required: 'Required',
-                                        })}
+                                        sx={{
+                                            input: { color: '#000' },
+                                            label: { color: '#000' },
+                                            width: '100%',
+                                        }}
+                                        {...register('phoneNumber')}
+                                        error={!!errors.phoneNumber}
+                                        helperText={errors.phoneNumber?.message}
                                     />
-                                    <FormErrorMessage>
-                                        {errors?.Address?.complement?.message}
-                                    </FormErrorMessage>
-                                </FormControl>
-                                <FormControl
-                                    isInvalid={
-                                        !!errors?.Address?.neighborhood?.message
-                                    }
-                                    id="neighborhood"
-                                    isRequired
-                                >
-                                    <FormLabel>Neighborhood</FormLabel>
-                                    <Input
+                                </Box>
+                                <Box className={styles.boxItem}>
+                                    <TextField
+                                        focused
+                                        required
+                                        id="description"
+                                        label="Description"
+                                        variant="outlined"
                                         type="text"
-                                        placeholder="Neighborhood"
-                                        {...register('Address.neighborhood', {
-                                            required: 'Required',
-                                        })}
+                                        multiline
+                                        maxRows={4}
+                                        sx={{
+                                            input: { color: '#000' },
+                                            label: { color: '#000' },
+                                            width: '100%',
+                                        }}
+                                        {...register('description')}
+                                        error={!!errors.description}
+                                        helperText={errors.description?.message}
                                     />
-                                    <FormErrorMessage>
-                                        {errors?.Address?.neighborhood?.message}
-                                    </FormErrorMessage>
-                                </FormControl>
-                                <FormControl
-                                    isInvalid={
-                                        !!errors?.Address?.district?.message
-                                    }
-                                    id="district"
-                                    isRequired
-                                >
-                                    <FormLabel>District</FormLabel>
-                                    <Input
+                                </Box>
+                                <Box className={styles.boxItem}>
+                                    <TextField
+                                        focused
+                                        required
+                                        id="street"
+                                        label="Street"
+                                        variant="outlined"
                                         type="text"
-                                        placeholder="District"
-                                        {...register('Address.district', {
-                                            required: 'Required',
-                                        })}
+                                        sx={{
+                                            input: { color: '#000' },
+                                            label: { color: '#000' },
+                                            width: '100%',
+                                        }}
+                                        {...register('Address.street')}
+                                        error={!!errors.Address?.street}
+                                        helperText={
+                                            errors.Address?.street?.message
+                                        }
                                     />
-                                    <FormErrorMessage>
-                                        {errors?.Address?.district?.message}
-                                    </FormErrorMessage>
-                                </FormControl>
+                                </Box>
                             </Stack>
-                            <Stack
-                                align="center"
-                                justify="center"
-                                alignContent="center"
-                                alignItems="baseline"
-                                spacing={1}
-                                padding={1}
-                            >
-                                <Heading as="h2" size="md">
-                                    Company address
-                                </Heading>
-                                <FormControl
-                                    isInvalid={!!errors?.Address?.city?.message}
-                                    id="city"
-                                    isRequired
-                                >
-                                    <FormLabel>City</FormLabel>
-                                    <Input
+                            <Stack className={styles.Login}>
+                                <Box className={styles.boxItem}>
+                                    <TextField
+                                        focused
+                                        required
+                                        id="number"
+                                        label="Number"
+                                        variant="outlined"
                                         type="text"
-                                        placeholder="City"
-                                        {...register('Address.city', {
-                                            required: 'Required',
-                                        })}
+                                        sx={{
+                                            input: { color: '#000' },
+                                            label: { color: '#000' },
+                                            width: '100%',
+                                        }}
+                                        {...register('Address.number')}
+                                        error={!!errors.Address?.number}
+                                        helperText={
+                                            errors.Address?.number?.message
+                                        }
                                     />
-                                    <FormErrorMessage>
-                                        {errors?.Address?.city?.message}
-                                    </FormErrorMessage>
-                                </FormControl>
-                                <FormControl
-                                    isInvalid={
-                                        !!errors?.Address?.county?.message
-                                    }
-                                    id="county"
-                                    isRequired
-                                >
-                                    <FormLabel>County</FormLabel>
-                                    <Input
+                                </Box>
+                                <Box className={styles.boxItem}>
+                                    <TextField
+                                        focused
+                                        required
+                                        id="complement"
+                                        label="Complement"
+                                        variant="outlined"
                                         type="text"
-                                        placeholder="County"
-                                        {...register('Address.county', {
-                                            required: 'Required',
-                                        })}
+                                        sx={{
+                                            input: { color: '#000' },
+                                            label: { color: '#000' },
+                                            width: '100%',
+                                        }}
+                                        {...register('Address.complement')}
+                                        error={!!errors.Address?.complement}
+                                        helperText={
+                                            errors.Address?.complement?.message
+                                        }
                                     />
-                                    <FormErrorMessage>
-                                        {errors?.Address?.county?.message}
-                                    </FormErrorMessage>
-                                </FormControl>
-                                <FormControl
-                                    isInvalid={
-                                        !!errors?.Address?.zipCode?.message
-                                    }
-                                    id="zipCode"
-                                    isRequired
-                                >
-                                    <FormLabel>ZipCode</FormLabel>
-                                    <Input
+                                </Box>
+                                <Box className={styles.boxItem}>
+                                    <TextField
+                                        focused
+                                        required
+                                        id="neighborhood"
+                                        label="Neighborhood"
+                                        variant="outlined"
                                         type="text"
-                                        placeholder="ZipCode"
-                                        {...register('Address.zipCode', {
-                                            required: 'Required',
-                                        })}
+                                        sx={{
+                                            input: { color: '#000' },
+                                            label: { color: '#000' },
+                                            width: '100%',
+                                        }}
+                                        {...register('Address.neighborhood')}
+                                        error={!!errors.Address?.neighborhood}
+                                        helperText={
+                                            errors.Address?.neighborhood
+                                                ?.message
+                                        }
                                     />
-                                    <FormErrorMessage>
-                                        {errors?.Address?.zipCode?.message}
-                                    </FormErrorMessage>
-                                </FormControl>
-                                <FormControl
-                                    isInvalid={
-                                        !!errors?.Address?.latitude?.message
-                                    }
-                                    id="latitude"
-                                    isRequired
-                                >
-                                    <FormLabel>Latitude</FormLabel>
-                                    <Input
+                                </Box>
+                                <Box className={styles.boxItem}>
+                                    <TextField
+                                        focused
+                                        required
+                                        id="district"
+                                        label="District"
+                                        variant="outlined"
                                         type="text"
-                                        placeholder="Latitude"
-                                        {...register('Address.latitude', {
-                                            required: 'Required',
-                                        })}
+                                        sx={{
+                                            input: { color: '#000' },
+                                            label: { color: '#000' },
+                                            width: '100%',
+                                        }}
+                                        {...register('Address.district')}
+                                        error={!!errors.Address?.district}
+                                        helperText={
+                                            errors.Address?.district?.message
+                                        }
                                     />
-                                    <FormErrorMessage>
-                                        {errors?.Address?.latitude?.message}
-                                    </FormErrorMessage>
-                                </FormControl>
-                                <FormControl
-                                    isInvalid={
-                                        !!errors?.Address?.longitude?.message
-                                    }
-                                    id="longitude"
-                                    isRequired
-                                >
-                                    <FormLabel>Longitude</FormLabel>
-                                    <Input
+                                </Box>
+                                <Box className={styles.boxItem}>
+                                    <TextField
+                                        focused
+                                        required
+                                        id="city"
+                                        label="City"
+                                        variant="outlined"
                                         type="text"
-                                        placeholder="Longitude"
-                                        {...register('Address.longitude', {
-                                            required: 'Required',
-                                        })}
+                                        sx={{
+                                            input: { color: '#000' },
+                                            label: { color: '#000' },
+                                            width: '100%',
+                                        }}
+                                        {...register('Address.city')}
+                                        error={!!errors.Address?.city}
+                                        helperText={
+                                            errors.Address?.city?.message
+                                        }
                                     />
-                                    <FormErrorMessage>
-                                        {errors?.Address?.longitude?.message}
-                                    </FormErrorMessage>
-                                </FormControl>
+                                </Box>
                             </Stack>
-                        </HStack>
-                        <Stack
-                            align="center"
-                            justify="center"
-                            alignContent="center"
-                            alignItems="center"
-                            spacing={1}
-                            padding={1}
-                            margin={5}
-                        >
+                            <Stack className={styles.Login}>
+                                <Box className={styles.boxItem}>
+                                    <TextField
+                                        focused
+                                        required
+                                        id="county"
+                                        label="County"
+                                        variant="outlined"
+                                        type="text"
+                                        sx={{
+                                            input: { color: '#000' },
+                                            label: { color: '#000' },
+                                            width: '100%',
+                                        }}
+                                        {...register('Address.county')}
+                                        error={!!errors.Address?.county}
+                                        helperText={
+                                            errors.Address?.county?.message
+                                        }
+                                    />
+                                </Box>
+                                <Box className={styles.boxItem}>
+                                    <TextField
+                                        focused
+                                        required
+                                        id="zipCode"
+                                        label="ZipCode"
+                                        variant="outlined"
+                                        type="text"
+                                        sx={{
+                                            input: { color: '#000' },
+                                            label: { color: '#000' },
+                                            width: '100%',
+                                        }}
+                                        {...register('Address.zipCode')}
+                                        error={!!errors.Address?.zipCode}
+                                        helperText={
+                                            errors.Address?.zipCode?.message
+                                        }
+                                    />
+                                </Box>
+                                <Box className={styles.boxItem}>
+                                    <TextField
+                                        focused
+                                        required
+                                        id="latitude"
+                                        label="Latitude"
+                                        variant="outlined"
+                                        type="text"
+                                        sx={{
+                                            input: { color: '#000' },
+                                            label: { color: '#000' },
+                                            width: '100%',
+                                        }}
+                                        {...register('Address.latitude')}
+                                        error={!!errors.Address?.latitude}
+                                        helperText={
+                                            errors.Address?.latitude?.message
+                                        }
+                                    />
+                                </Box>
+                                <Box className={styles.boxItem}>
+                                    <TextField
+                                        focused
+                                        required
+                                        id="longitude"
+                                        label="Longitude"
+                                        variant="outlined"
+                                        type="text"
+                                        sx={{
+                                            input: { color: '#000' },
+                                            label: { color: '#000' },
+                                            width: '100%',
+                                        }}
+                                        {...register('Address.longitude')}
+                                        error={!!errors.Address?.longitude}
+                                        helperText={
+                                            errors.Address?.longitude?.message
+                                        }
+                                    />
+                                </Box>
+                            </Stack>
+                        </Stack>
+                        <Box className={styles.boxItem}>
                             <Button
-                                bg={'blue.400'}
-                                color={'white'}
-                                _hover={{
-                                    bg: 'blue.500',
-                                }}
-                                onClick={handleSubmit(onSubmit)}
-                                disabled={!!errors.description || !!errors.name}
+                                type="submit"
+                                variant="contained"
+                                color="secondary"
+                                sx={{ width: '100%' }}
                             >
                                 Create
                             </Button>
-                        </Stack>
+                        </Box>
                     </form>
-                </Box>
-            </Stack>
-        </Flex>
+                </Stack>
+            </Box>
+            <SnackbarAlert
+                open={isOpen}
+                handleClose={handleClose}
+                isError={isError}
+                message={message}
+            />
+        </>
     );
 }

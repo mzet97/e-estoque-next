@@ -1,44 +1,120 @@
 import canAccess from '@/components/CanAccess/CanAccess';
+import SnackbarAlert from '@/components/SnackbarAlert/SnackbarAlert';
 import PagedResult from '@/models/Result/PagedResult';
 import Category from '@/models/category/Category';
 import { api } from '@/services/apiClient';
 import { findAllCategories } from '@/services/categoriesServices';
-import { DeleteIcon, EditIcon, SearchIcon } from '@chakra-ui/icons';
-import {
-    Table,
-    TableCaption,
-    TableContainer,
-    Tbody,
-    Td,
-    Tfoot,
-    Th,
-    Thead,
-    Tr,
-    Container,
-    Stack,
-    Text,
-    Heading,
-    HStack,
-    Button,
-    Tooltip,
-    IconButton,
-    Spinner,
-    useToast,
-} from '@chakra-ui/react';
+import { Button, IconButton, Skeleton, Stack, Typography } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
+import {
+    DataGrid,
+    GridColDef,
+    GridPagination,
+    GridToolbarColumnsButton,
+    GridToolbarContainer,
+    GridValueGetterParams,
+    GridToolbarFilterButton,
+    GridToolbarDensitySelector,
+    GridToolbarExport,
+    GridRowParams,
+} from '@mui/x-data-grid';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+
+function CustomGridToolbar(pros: any) {
+    return (
+        <GridToolbarContainer>
+            <GridToolbarColumnsButton />
+            <GridToolbarFilterButton />
+            <GridToolbarDensitySelector />
+            <GridToolbarExport
+                csvOptions={{
+                    fileName: `categories-${Date.now()}`,
+                    delimiter: ';',
+                    utf8WithBom: true,
+                }}
+            />
+        </GridToolbarContainer>
+    );
+}
 
 function CategoryPage() {
-    const toast = useToast();
+    const columns: GridColDef[] = [
+        { field: 'id', headerName: 'Id', width: 300 },
+        { field: 'name', headerName: 'Name', width: 200 },
+        { field: 'description', headerName: 'Description', width: 300 },
+        {
+            field: 'createdAt',
+            headerName: 'Create Date',
+            type: 'text',
+            width: 300,
+        },
+        {
+            field: 'updatedAt',
+            headerName: 'Update Date',
+            type: 'text',
+            width: 300,
+        },
+        {
+            field: 'deletedAt',
+            headerName: 'Delete Date',
+            type: 'text',
+            width: 300,
+        },
+        {
+            field: 'action',
+            headerName: 'Action',
+            sortable: false,
+            renderCell: ({ id }: Partial<GridRowParams>) => (
+                <>
+                    <IconButton
+                        aria-label="edit"
+                        size="large"
+                        onClick={() => handleEdit(id + '')}
+                    >
+                        <EditIcon />
+                    </IconButton>
+                    <IconButton
+                        aria-label="delete"
+                        size="large"
+                        onClick={() => handleDelete(id + '')}
+                    >
+                        <DeleteIcon />
+                    </IconButton>
+                </>
+            ),
+            width: 150,
+        },
+    ];
+
     const router = useRouter();
+    const [isError, setIsError] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+    const [message, setMessage] = useState('Teste');
     const [categories, setCategories] = useState<Category[]>([]);
     const [pagedResult, setPagedResult] = useState<PagedResult>();
+
+    const handleClose = (
+        event?: React.SyntheticEvent | Event,
+        reason?: string,
+    ) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setIsOpen(false);
+    };
 
     const getData = useCallback(async () => {
         const reuslt = await findAllCategories();
         if (reuslt) {
             setCategories([...reuslt.data]);
             setPagedResult(reuslt.pagedResult);
+
+            setMessage('Success load categories.');
+            setIsError(false);
+            setIsOpen(true);
         }
     }, []);
 
@@ -49,23 +125,12 @@ function CategoryPage() {
     const handleDelete = (id: string) => {
         api.delete(`Category/${id}`)
             .then(response => {
-                toast({
-                    title: 'Success delte  category.',
-                    description: 'Category delte with success.',
-                    status: 'success',
-                    duration: 9000,
-                    isClosable: true,
-                });
                 router.push('/category/');
             })
             .catch(err => {
-                toast({
-                    title: 'Failure to delte a category.',
-                    description: 'Error to delte a category.',
-                    status: 'error',
-                    duration: 9000,
-                    isClosable: true,
-                });
+                setMessage('Failure delete categories.');
+                setIsError(true);
+                setIsOpen(true);
             });
     };
     const handleEdit = (id: string) => {
@@ -78,139 +143,66 @@ function CategoryPage() {
 
     return (
         <>
-            <Stack padding={10}>
-                <HStack alignItems="center" justifyContent="space-between">
-                    <Heading as="h1" size="xl">
-                        List of categories
-                    </Heading>
-                    <Button colorScheme="green" onClick={() => handleCreate()}>
-                        Create a new Category
+            <Stack direction="column" spacing={2}>
+                <Stack
+                    direction="row"
+                    justifyContent="space-around"
+                    alignItems="center"
+                    spacing={2}
+                    sx={{ mt: '2rem', pt: '1rem' }}
+                >
+                    <Typography variant="h2">List of Categories</Typography>
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        color="secondary"
+                        onClick={handleCreate}
+                    >
+                        <Typography variant="h6">
+                            Create a new Category
+                        </Typography>
                     </Button>
-                </HStack>
-
-                {categories.length === 0 ? (
-                    <Container>
-                        <Text>Loading...</Text>
-                        <Spinner size="xl" />
-                    </Container>
-                ) : (
-                    <Table variant="striped" colorScheme="green" size="lg">
-                        <Thead>
-                            <Tr>
-                                <Th>
-                                    <Text>id</Text>
-                                </Th>
-                                <Th>
-                                    <Text>Name</Text>
-                                </Th>
-                                <Th>
-                                    <Text>Description</Text>
-                                </Th>
-                                <Th>
-                                    <Text>Short Description</Text>
-                                </Th>
-                                <Th>
-                                    <Text>Created Date</Text>
-                                </Th>
-                                <Th>
-                                    <Text>Updated Date</Text>
-                                </Th>
-                                <Th>
-                                    <Text>Deleted Date</Text>
-                                </Th>
-                                <Th>
-                                    <Text>Actions</Text>
-                                </Th>
-                            </Tr>
-                        </Thead>
-                        <Tbody>
-                            {categories.map(category => {
-                                return (
-                                    <Tr key={category.id}>
-                                        <Td>{category.id}</Td>
-                                        <Td>{category.name}</Td>
-                                        <Td>{category.description}</Td>
-                                        <Td>{category.shortDescription}</Td>
-                                        <Td>{category.createdAt}</Td>
-                                        <Td>{category.updatedAt}</Td>
-                                        <Td>{category.deletedAt}</Td>
-                                        <Td>
-                                            <HStack padding={5} align="center">
-                                                <Tooltip
-                                                    hasArrow
-                                                    label="Edit category"
-                                                >
-                                                    <IconButton
-                                                        colorScheme="blue"
-                                                        aria-label="Edit category"
-                                                        icon={<EditIcon />}
-                                                        onClick={() =>
-                                                            handleEdit(
-                                                                category.id,
-                                                            )
-                                                        }
-                                                    />
-                                                </Tooltip>
-                                                <Tooltip
-                                                    hasArrow
-                                                    label="Delete category"
-                                                >
-                                                    <IconButton
-                                                        colorScheme="red"
-                                                        aria-label="Delete category"
-                                                        icon={<DeleteIcon />}
-                                                        onClick={() =>
-                                                            handleDelete(
-                                                                category.id,
-                                                            )
-                                                        }
-                                                    />
-                                                </Tooltip>
-                                            </HStack>
-                                        </Td>
-                                    </Tr>
-                                );
-                            })}
-                        </Tbody>
-                        <Tfoot>
-                            <Tr>
-                                <Th>
-                                    <Text>id</Text>
-                                </Th>
-                                <Th>
-                                    <Text>Name</Text>
-                                </Th>
-                                <Th>
-                                    <Text>Name</Text>
-                                </Th>
-                                <Th>
-                                    <Text>Short Description</Text>
-                                </Th>
-                                <Th>
-                                    <Text>Created Date</Text>
-                                </Th>
-                                <Th>
-                                    <Text>Updated Date</Text>
-                                </Th>
-                                <Th>
-                                    <Text>Deleted Date</Text>
-                                </Th>
-                                <Th>
-                                    <Text>Actions</Text>
-                                </Th>
-                            </Tr>
-                        </Tfoot>
-                    </Table>
-                )}
-                <HStack>
-                    <Text>Current page {pagedResult?.currentPage}</Text>
-                    <Text>Page count {pagedResult?.pageCount}</Text>
-                    <Text>Page size {pagedResult?.pageSize}</Text>
-                    <Text>Row count {pagedResult?.rowCount}</Text>
-                    <Text>Frist page {pagedResult?.firstRowOnPage}</Text>
-                    <Text>Last page {pagedResult?.lastRowOnPage}</Text>
-                </HStack>
+                </Stack>
+                <Stack
+                    direction="column"
+                    justifyContent="center"
+                    alignItems="center"
+                    spacing={2}
+                >
+                    {!categories && !pagedResult ? (
+                        <Skeleton
+                            variant="rectangular"
+                            width={210}
+                            height={118}
+                        />
+                    ) : (
+                        <DataGrid
+                            sx={{ backgroundColor: 'rgba(72, 180, 212, 0.3)' }}
+                            rows={categories}
+                            columns={columns}
+                            initialState={{
+                                pagination: {
+                                    paginationModel: {
+                                        page: 1,
+                                        pageSize: 10,
+                                    },
+                                },
+                            }}
+                            pageSizeOptions={[5, 10, 20, 30]}
+                            slots={{
+                                toolbar: CustomGridToolbar,
+                            }}
+                        />
+                    )}
+                </Stack>
             </Stack>
+
+            <SnackbarAlert
+                open={isOpen}
+                handleClose={handleClose}
+                isError={isError}
+                message={message}
+            />
         </>
     );
 }

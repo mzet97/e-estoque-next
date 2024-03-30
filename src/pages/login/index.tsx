@@ -19,6 +19,7 @@ import UserLogin from '@/models/auth/UserLogin';
 import { signIn } from 'next-auth/react';
 
 import styles from './styles.module.css';
+import SnackbarAlert from '@/components/SnackbarAlert/SnackbarAlert';
 
 const schema = yup.object().shape({
     email: yup.string().required(),
@@ -36,7 +37,7 @@ const Login: React.FC = () => {
     });
 
     const [isError, setIsError] = React.useState(false);
-    const [open, setOpen] = React.useState(false);
+    const [isOpen, setIsOpen] = React.useState(false);
     const [message, setMessage] = React.useState('Teste');
     const router = useRouter();
 
@@ -48,7 +49,7 @@ const Login: React.FC = () => {
             return;
         }
 
-        setOpen(false);
+        setIsOpen(false);
     };
 
     const onSubmit = async (values: UserLogin) => {
@@ -62,17 +63,17 @@ const Login: React.FC = () => {
             if (!response?.error) {
                 setMessage('Success login.');
                 setIsError(false);
-                setOpen(true);
+                setIsOpen(true);
                 router.push('/dashboard');
             } else {
                 setMessage('Failure login.');
                 setIsError(true);
-                setOpen(true);
+                setIsOpen(true);
             }
         } catch (err) {
             setMessage('Failure login.');
             setIsError(true);
-            setOpen(true);
+            setIsOpen(true);
         }
     };
 
@@ -116,6 +117,7 @@ const Login: React.FC = () => {
                                     sx={{
                                         input: { color: '#000' },
                                         label: { color: '#000' },
+                                        width: '100%',
                                     }}
                                     {...register('email')}
                                     error={!!errors.email}
@@ -131,6 +133,7 @@ const Login: React.FC = () => {
                                     sx={{
                                         input: { color: '#000' },
                                         label: { color: '#000' },
+                                        width: '100%',
                                     }}
                                     {...register('password')}
                                     error={!!errors.password}
@@ -142,6 +145,7 @@ const Login: React.FC = () => {
                                     type="submit"
                                     variant="contained"
                                     color="secondary"
+                                    sx={{ width: '100%' }}
                                 >
                                     Login
                                 </Button>
@@ -150,17 +154,12 @@ const Login: React.FC = () => {
                     </form>
                 </Stack>
             </Box>
-
-            <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-                <Alert
-                    onClose={handleClose}
-                    severity={isError ? 'error' : 'success'}
-                    variant="filled"
-                    sx={{ width: '100%' }}
-                >
-                    {message}
-                </Alert>
-            </Snackbar>
+            <SnackbarAlert
+                open={isOpen}
+                handleClose={handleClose}
+                isError={isError}
+                message={message}
+            />
         </>
     );
 };

@@ -31,31 +31,31 @@ const getNavItems = (user: any): Array<NavItem> => {
         return [
             {
                 label: 'Dashboard',
-                href: 'dashboard',
+                href: '/dashboard',
             },
             {
                 label: 'Category',
-                href: 'category',
+                href: '/category',
             },
             {
                 label: 'Company',
-                href: 'company',
+                href: '/company',
             },
             {
                 label: 'Customer',
-                href: 'customer',
+                href: '/customer',
             },
             {
                 label: 'Product',
-                href: 'product',
+                href: '/product',
             },
             {
                 label: 'Tax',
-                href: 'tax',
+                href: '/tax',
             },
             {
                 label: 'Sales',
-                href: 'sales',
+                href: '/sales',
             },
         ];
     } else {
@@ -66,7 +66,7 @@ const getNavItems = (user: any): Array<NavItem> => {
             },
             {
                 label: 'About',
-                href: 'about',
+                href: '/about',
             },
         ];
     }
@@ -149,6 +149,7 @@ const Header: React.FC = () => {
                                         color="inherit"
                                         component={NextLink}
                                         href={item.href}
+                                        className="font-mono text-lg antialiased"
                                     >
                                         {item.label}
                                     </MuiLink>
@@ -190,6 +191,7 @@ const Header: React.FC = () => {
                                     underline="none"
                                     component={NextLink}
                                     href={item.href}
+                                    className="font-mono text-lg antialiased"
                                 >
                                     {item.label}
                                 </MuiLink>
@@ -208,8 +210,8 @@ const Header: React.FC = () => {
                             {!!session ? (
                                 <Button
                                     variant="contained"
-                                    color="secondary"
                                     onClick={() => signOut()}
+                                    className="bg-[#f87171] text-[##fff] font-mono"
                                 >
                                     Logout
                                 </Button>
@@ -223,7 +225,7 @@ const Header: React.FC = () => {
                                     <NextLink href="/login">
                                         <Button
                                             variant="contained"
-                                            color="primary"
+                                            className="bg-[#34d399] text-[#000] font-mono"
                                         >
                                             Login
                                         </Button>
@@ -231,7 +233,7 @@ const Header: React.FC = () => {
                                     <NextLink href="/signUp">
                                         <Button
                                             variant="contained"
-                                            color="secondary"
+                                            className="bg-[#fef08a] text-[#000] font-mono"
                                         >
                                             SingUp
                                         </Button>

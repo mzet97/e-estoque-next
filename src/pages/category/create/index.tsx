@@ -2,20 +2,12 @@ import * as yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/navigation';
-import {
-    Button,
-    Container,
-    FormControl,
-    FormErrorMessage,
-    FormLabel,
-    Heading,
-    Input,
-    Stack,
-    Textarea,
-    useToast,
-} from '@chakra-ui/react';
 import CreateCategory from '@/models/category/CreateCategory';
 import { api } from '@/services/apiClient';
+import SnackbarAlert from '@/components/SnackbarAlert/SnackbarAlert';
+import { useState } from 'react';
+import { Box, Button, Stack, TextField, Typography } from '@mui/material';
+import styles from './styles.module.css';
 
 const schema = yup.object().shape({
     name: yup.string().required().min(3).max(80),
@@ -33,111 +25,144 @@ export default function CreateCategoryPage() {
         resolver: yupResolver(schema),
     });
 
-    const toast = useToast();
+    const [isError, setIsError] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+    const [message, setMessage] = useState('Teste');
     const router = useRouter();
+
+    const handleClose = (
+        event?: React.SyntheticEvent | Event,
+        reason?: string,
+    ) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setIsOpen(false);
+    };
 
     const onSubmit = async (values: CreateCategory) => {
         try {
             console.log('input', values);
             await api.post('Category', values);
 
-            toast({
-                title: 'Success a create category.',
-                description: 'Category created with success.',
-                status: 'success',
-                duration: 9000,
-                isClosable: true,
-            });
+            setMessage('Success create category.');
+            setIsError(false);
+            setIsOpen(true);
 
             router.push('/category');
         } catch (err) {
-            toast({
-                title: 'Failure to create a category.',
-                description: 'Error to create a category.',
-                status: 'error',
-                duration: 9000,
-                isClosable: true,
-            });
+            setMessage('Failure to create category.');
+            setIsError(true);
+            setIsOpen(true);
         }
     };
 
     return (
-        <Container>
-            <Stack padding={10}>
-                <Heading as="h1" size="xl">
-                    Create a new category
-                </Heading>
-                <form style={{ width: 350 }} onSubmit={handleSubmit(onSubmit)}>
-                    <Stack spacing={3} padding={5}>
-                        <FormControl
-                            isInvalid={!!errors?.name?.message}
-                            id="name"
-                            isRequired
-                        >
-                            <FormLabel>Name</FormLabel>
-                            <Input
-                                type="text"
-                                placeholder="Name"
-                                {...register('name', {
-                                    required: 'Required',
-                                })}
-                            />
-                            <FormErrorMessage>
-                                {errors?.name?.message}
-                            </FormErrorMessage>
-                        </FormControl>
-                        <FormControl
-                            isInvalid={!!errors?.description?.message}
-                            id="name"
-                            isRequired
-                        >
-                            <FormLabel>Description</FormLabel>
-                            <Textarea
-                                placeholder="Description"
-                                {...register('description', {
-                                    required: 'Required',
-                                })}
-                                size="sm"
-                            />
-                            <FormErrorMessage>
-                                {errors?.description?.message}
-                            </FormErrorMessage>
-                        </FormControl>
-                        <FormControl
-                            isInvalid={!!errors?.shortDescription?.message}
-                            id="name"
-                            isRequired
-                        >
-                            <FormLabel>Short Description</FormLabel>
-                            <Textarea
-                                placeholder="Short Description"
-                                {...register('shortDescription', {
-                                    required: 'Required',
-                                })}
-                                size="sm"
-                            />
-                            <FormErrorMessage>
-                                {errors?.shortDescription?.message}
-                            </FormErrorMessage>
-                        </FormControl>
-                        <Button
-                            bg={'blue.400'}
-                            color={'white'}
-                            _hover={{
-                                bg: 'blue.500',
-                            }}
-                            onClick={handleSubmit(onSubmit)}
-                            disabled={
-                                !!errors.shortDescription ||
-                                !!errors.description ||
-                                !!errors.name
-                            }
-                        >
-                            Create
-                        </Button>
-                    </Stack>
-                </form>
-            </Stack>
-        </Container>
+        <>
+            <Box className={styles.boxCenter}>
+                <Stack
+                    direction="column"
+                    justifyContent="center"
+                    alignItems="center"
+                    spacing={2}
+                >
+                    <form
+                        onSubmit={handleSubmit(onSubmit)}
+                        noValidate
+                        autoComplete="off"
+                    >
+                        <Stack className={styles.Login}>
+                            <Box className={styles.boxItem}>
+                                <Typography
+                                    variant="h4"
+                                    component="h4"
+                                    sx={{ color: '#000' }}
+                                >
+                                    Create a new Category
+                                </Typography>
+                                <Typography
+                                    variant="subtitle1"
+                                    sx={{ color: '#000' }}
+                                >
+                                    Enter with data
+                                </Typography>
+                            </Box>
+                            <Box className={styles.boxItem}>
+                                <TextField
+                                    required
+                                    id="name"
+                                    label="Name"
+                                    variant="outlined"
+                                    type="text"
+                                    sx={{
+                                        input: { color: '#000' },
+                                        label: { color: '#000' },
+                                        width: '100%',
+                                    }}
+                                    {...register('name')}
+                                    error={!!errors.name}
+                                    helperText={errors.name?.message}
+                                />
+                            </Box>
+                            <Box className={styles.boxItem}>
+                                <TextField
+                                    required
+                                    id="description"
+                                    label="Description"
+                                    variant="outlined"
+                                    type="text"
+                                    multiline
+                                    maxRows={4}
+                                    sx={{
+                                        input: { color: '#000' },
+                                        label: { color: '#000' },
+                                        width: '100%',
+                                    }}
+                                    {...register('description')}
+                                    error={!!errors.description}
+                                    helperText={errors.description?.message}
+                                />
+                            </Box>
+                            <Box className={styles.boxItem}>
+                                <TextField
+                                    required
+                                    id="shortDescription"
+                                    label="ShortDescription"
+                                    variant="outlined"
+                                    type="text"
+                                    sx={{
+                                        input: { color: '#000' },
+                                        label: { color: '#000' },
+                                        width: '100%',
+                                    }}
+                                    {...register('shortDescription')}
+                                    error={!!errors.shortDescription}
+                                    helperText={
+                                        errors.shortDescription?.message
+                                    }
+                                />
+                            </Box>
+                            <Box className={styles.boxItem}>
+                                <Button
+                                    type="submit"
+                                    variant="contained"
+                                    color="secondary"
+                                    sx={{ width: '100%' }}
+                                >
+                                    Create
+                                </Button>
+                            </Box>
+                        </Stack>
+                    </form>
+                </Stack>
+            </Box>
+            <SnackbarAlert
+                open={isOpen}
+                handleClose={handleClose}
+                isError={isError}
+                message={message}
+            />
+        </>
     );
 }

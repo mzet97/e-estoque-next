@@ -3,20 +3,14 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/navigation';
 import {
+    Box,
     Button,
-    Container,
-    FormControl,
-    FormErrorMessage,
-    FormLabel,
-    Heading,
-    Input,
+    MenuItem,
     Stack,
-    Textarea,
-    useToast,
-    Select,
-    Text,
-    Spinner,
-} from '@chakra-ui/react';
+    TextField,
+    Typography,
+} from '@mui/material';
+
 import { api } from '@/services/apiClient';
 import CreateTax from '@/models/Tax/CreateTax';
 import { useCallback, useEffect, useState } from 'react';
@@ -25,6 +19,8 @@ import Category from '@/models/category/Category';
 import EditTax from '@/models/Tax/EditTax';
 import { findTaxById } from '@/services/taxServices';
 import { findAllCategories } from '@/services/categoriesServices';
+import SnackbarAlert from '@/components/SnackbarAlert/SnackbarAlert';
+import styles from './styles.module.css';
 
 const schema = yup.object().shape({
     name: yup.string().required().min(3).max(80),
@@ -44,34 +40,39 @@ export default function EditTaxPage() {
         resolver: yupResolver(schema),
     });
 
-    const toast = useToast();
+    const [isError, setIsError] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+    const [message, setMessage] = useState('Teste');
     const router = useRouter();
     const queryRouter = useQueryRouter();
     const [categories, setCategories] = useState<Category[]>([]);
     const [tax, setTax] = useState<EditTax>();
+
+    const handleClose = (
+        event?: React.SyntheticEvent | Event,
+        reason?: string,
+    ) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setIsOpen(false);
+    };
 
     const onSubmit = async (values: CreateTax) => {
         try {
             console.log('input', values);
             await api.post('Tax', values);
 
-            toast({
-                title: 'Success a create tax.',
-                description: 'Tax created with success.',
-                status: 'success',
-                duration: 9000,
-                isClosable: true,
-            });
+            setMessage('Success edit tax.');
+            setIsError(false);
+            setIsOpen(true);
 
             router.push('/tax');
         } catch (err) {
-            toast({
-                title: 'Failure to create a tax.',
-                description: 'Error to create a tax.',
-                status: 'error',
-                duration: 9000,
-                isClosable: true,
-            });
+            setMessage('Failure to edit tax.');
+            setIsError(true);
+            setIsOpen(true);
         }
     };
 
@@ -87,7 +88,7 @@ export default function EditTaxPage() {
             const respCategories = await findAllCategories();
 
             if (respCategories) {
-                setCategories([...respCategories]);
+                setCategories([...respCategories.data]);
             }
         } else {
             router.push('/tax');
@@ -99,138 +100,167 @@ export default function EditTaxPage() {
     }, [getData]);
 
     return (
-        <Container>
-            {!tax ? (
-                <Container>
-                    <Text>Loading...</Text>
-                    <Spinner size="xl" />
-                </Container>
-            ) : (
-                <Stack padding={10}>
-                    <Heading as="h1" size="xl">
-                        Create a new tax
-                    </Heading>
+        <>
+            <Box className={styles.boxCenter}>
+                <Stack
+                    direction="column"
+                    justifyContent="center"
+                    alignItems="center"
+                    spacing={2}
+                >
                     <form
-                        style={{ width: 350 }}
                         onSubmit={handleSubmit(onSubmit)}
+                        noValidate
+                        autoComplete="off"
                     >
-                        <Stack spacing={3} padding={5}>
-                            <FormControl
-                                isInvalid={!!errors?.id?.message}
-                                id="id"
-                                isRequired
-                                hidden
-                            >
-                                <FormLabel>Id</FormLabel>
-                                <Input
-                                    type="text"
-                                    placeholder="Id"
-                                    {...register('id', {
-                                        required: 'Required',
-                                    })}
-                                    value={tax.id}
-                                />
-                                <FormErrorMessage>
-                                    {errors?.id?.message}
-                                </FormErrorMessage>
-                            </FormControl>
-                            <FormControl
-                                isInvalid={!!errors?.name?.message}
-                                id="name"
-                                isRequired
-                            >
-                                <FormLabel>Name</FormLabel>
-                                <Input
-                                    type="text"
-                                    placeholder="Name"
-                                    {...register('name', {
-                                        required: 'Required',
-                                    })}
-                                    value={tax.name}
-                                />
-                                <FormErrorMessage>
-                                    {errors?.name?.message}
-                                </FormErrorMessage>
-                            </FormControl>
-                            <FormControl
-                                isInvalid={!!errors?.description?.message}
-                                id="name"
-                                isRequired
-                            >
-                                <FormLabel>Description</FormLabel>
-                                <Textarea
-                                    placeholder="Description"
-                                    {...register('description', {
-                                        required: 'Required',
-                                    })}
-                                    size="sm"
-                                    value={tax.description}
-                                />
-                                <FormErrorMessage>
-                                    {errors?.description?.message}
-                                </FormErrorMessage>
-                            </FormControl>
-                            <FormControl
-                                isInvalid={!!errors?.percentage?.message}
-                                id="name"
-                                isRequired
-                            >
-                                <FormLabel>Percentage</FormLabel>
-                                <Input
-                                    type="number"
-                                    placeholder="Percentage"
-                                    {...register('percentage', {
-                                        required: 'Required',
-                                    })}
-                                    value={tax.percentage}
-                                />
-                                <FormErrorMessage>
-                                    {errors?.percentage?.message}
-                                </FormErrorMessage>
-                            </FormControl>
-
-                            <FormControl
-                                isInvalid={!!errors?.idCategory?.message}
-                                id="name"
-                                isRequired
-                            >
-                                <FormLabel>Category</FormLabel>
-                                <Select
-                                    {...register('idCategory')}
-                                    placeholder="Select category"
+                        <Stack
+                            className={styles.Login}
+                            useFlexGap
+                            flexWrap="wrap"
+                            sx={{ width: '30rem' }}
+                        >
+                            <Box className={styles.boxItem}>
+                                <Typography
+                                    variant="h4"
+                                    component="h4"
+                                    sx={{
+                                        color: '#000',
+                                    }}
                                 >
-                                    {categories.map(category => (
-                                        <option
-                                            key={category.id}
-                                            value={category.id}
+                                    Create a new Tax
+                                </Typography>
+                                <Typography
+                                    variant="subtitle1"
+                                    sx={{ color: '#000' }}
+                                >
+                                    Enter with data
+                                </Typography>
+                            </Box>
+                            <Box className={styles.boxItem} hidden>
+                                <TextField
+                                    disabled
+                                    hidden
+                                    focused
+                                    required
+                                    id="id"
+                                    label="Id"
+                                    variant="outlined"
+                                    type="text"
+                                    sx={{
+                                        input: { color: '#000' },
+                                        label: { color: '#000' },
+                                        width: '100%',
+                                    }}
+                                    {...register('id')}
+                                    error={!!errors.id}
+                                    helperText={errors.id?.message}
+                                    value={tax?.id}
+                                />
+                            </Box>
+                            <Box className={styles.boxItem}>
+                                <TextField
+                                    focused
+                                    required
+                                    id="name"
+                                    label="Name"
+                                    variant="outlined"
+                                    type="text"
+                                    sx={{
+                                        input: { color: '#000' },
+                                        label: { color: '#000' },
+                                        width: '100%',
+                                    }}
+                                    {...register('name')}
+                                    error={!!errors.name}
+                                    helperText={errors.name?.message}
+                                    value={tax?.name}
+                                />
+                            </Box>
+                            <Box className={styles.boxItem}>
+                                <TextField
+                                    focused
+                                    required
+                                    id="percentage"
+                                    label="Percentage"
+                                    variant="outlined"
+                                    type="number"
+                                    sx={{
+                                        input: { color: '#000' },
+                                        label: { color: '#000' },
+                                        width: '100%',
+                                    }}
+                                    {...register('percentage')}
+                                    error={!!errors.percentage}
+                                    helperText={errors.percentage?.message}
+                                    value={tax?.percentage}
+                                />
+                            </Box>
+                            <Box className={styles.boxItem}>
+                                <TextField
+                                    focused
+                                    required
+                                    id="description"
+                                    label="Description"
+                                    variant="outlined"
+                                    type="text"
+                                    multiline
+                                    maxRows={4}
+                                    sx={{
+                                        input: { color: '#000' },
+                                        label: { color: '#000' },
+                                        width: '100%',
+                                    }}
+                                    {...register('description')}
+                                    error={!!errors.description}
+                                    helperText={errors.description?.message}
+                                    value={tax?.description}
+                                />
+                            </Box>
+                            <Box className={styles.boxItem}>
+                                <TextField
+                                    required
+                                    id="idCategory"
+                                    select
+                                    label="Category"
+                                    sx={{
+                                        input: { color: '#000' },
+                                        label: { color: '#000' },
+                                        width: '100%',
+                                    }}
+                                    {...register('idCategory')}
+                                    error={!!errors.idCategory}
+                                    helperText={errors.idCategory?.message}
+                                >
+                                    {categories.map(option => (
+                                        <MenuItem
+                                            key={option.id}
+                                            value={option.id}
                                         >
-                                            {category.name}
-                                        </option>
+                                            {option.name}
+                                        </MenuItem>
                                     ))}
-                                </Select>
-                                <FormErrorMessage>
-                                    {errors?.idCategory?.message}
-                                </FormErrorMessage>
-                            </FormControl>
-                            <Button
-                                bg={'blue.400'}
-                                color={'white'}
-                                _hover={{
-                                    bg: 'blue.500',
-                                }}
-                                onClick={handleSubmit(onSubmit)}
-                                disabled={
-                                    !!errors.percentage ||
-                                    !!errors.description ||
-                                    !!errors.name
-                                }
-                            >
-                                Create
-                            </Button>
+                                </TextField>
+                            </Box>
+                            <Box className={styles.boxItem}>
+                                <Button
+                                    type="submit"
+                                    variant="contained"
+                                    color="secondary"
+                                    sx={{ width: '100%' }}
+                                >
+                                    Create
+                                </Button>
+                            </Box>
                         </Stack>
                     </form>
                 </Stack>
-            )}
-        </Container>
+            </Box>
+            <SnackbarAlert
+                open={isOpen}
+                handleClose={handleClose}
+                isError={isError}
+                message={message}
+            />
+        </>
     );
 }

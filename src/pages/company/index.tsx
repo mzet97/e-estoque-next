@@ -1,34 +1,103 @@
 import canAccess from '@/components/CanAccess/CanAccess';
+import SnackbarAlert from '@/components/SnackbarAlert/SnackbarAlert';
 import Company from '@/models/Company/Company';
 import PagedResult from '@/models/Result/PagedResult';
 import { api } from '@/services/apiClient';
 import { findAllCompanies } from '@/services/companiesServices';
-import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
+import { Button, IconButton, Skeleton, Stack, Typography } from '@mui/material';
 import {
-    Table,
-    Tbody,
-    Td,
-    Tfoot,
-    Th,
-    Thead,
-    Tr,
-    Container,
-    Stack,
-    Text,
-    Heading,
-    HStack,
-    Button,
-    Tooltip,
-    IconButton,
-    Spinner,
-    useToast,
-} from '@chakra-ui/react';
+    DataGrid,
+    GridColDef,
+    GridRowParams,
+    GridToolbarColumnsButton,
+    GridToolbarContainer,
+    GridToolbarDensitySelector,
+    GridToolbarExport,
+    GridToolbarFilterButton,
+} from '@mui/x-data-grid';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+
+function CustomGridToolbar(pros: any) {
+    return (
+        <GridToolbarContainer>
+            <GridToolbarColumnsButton />
+            <GridToolbarFilterButton />
+            <GridToolbarDensitySelector />
+            <GridToolbarExport
+                csvOptions={{
+                    fileName: `companies-${Date.now()}`,
+                    delimiter: ';',
+                    utf8WithBom: true,
+                }}
+            />
+        </GridToolbarContainer>
+    );
+}
 
 function CompanyPage() {
-    const toast = useToast();
+    const columns: GridColDef[] = [
+        { field: 'id', headerName: 'Id', width: 100 },
+        { field: 'docId', headerName: 'DocId', width: 200 },
+        { field: 'name', headerName: 'Name', width: 200 },
+        { field: 'email', headerName: 'Email', width: 200 },
+        { field: 'phoneNumber', headerName: 'PhoneNumber', width: 200 },
+        { field: 'phoneNumber', headerName: 'PhoneNumber', width: 200 },
+        {
+            field: 'idCompanyAddress',
+            headerName: 'IdCompanyAddress',
+            width: 100,
+        },
+        {
+            field: 'createdAt',
+            headerName: 'Create Date',
+            type: 'text',
+            width: 100,
+        },
+        {
+            field: 'updatedAt',
+            headerName: 'Update Date',
+            type: 'text',
+            width: 100,
+        },
+        {
+            field: 'deletedAt',
+            headerName: 'Delete Date',
+            type: 'text',
+            width: 100,
+        },
+        {
+            field: 'action',
+            headerName: 'Action',
+            sortable: false,
+            renderCell: ({ id }: Partial<GridRowParams>) => (
+                <>
+                    <IconButton
+                        aria-label="edit"
+                        size="large"
+                        onClick={() => handleEdit(id + '')}
+                    >
+                        <EditIcon />
+                    </IconButton>
+                    <IconButton
+                        aria-label="delete"
+                        size="large"
+                        onClick={() => handleDelete(id + '')}
+                    >
+                        <DeleteIcon />
+                    </IconButton>
+                </>
+            ),
+            width: 200,
+        },
+    ];
+
     const router = useRouter();
+    const [isError, setIsError] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+    const [message, setMessage] = useState('Teste');
     const [companies, setCompanies] = useState<Company[]>([]);
     const [pagedResult, setPagedResult] = useState<PagedResult>();
 
@@ -37,6 +106,10 @@ function CompanyPage() {
         if (reuslt) {
             setCompanies([...reuslt.data]);
             setPagedResult(reuslt.pagedResult);
+
+            setMessage('Success load companies.');
+            setIsError(false);
+            setIsOpen(true);
         }
     }, []);
 
@@ -44,26 +117,26 @@ function CompanyPage() {
         getData();
     }, [getData]);
 
+    const handleClose = (
+        event?: React.SyntheticEvent | Event,
+        reason?: string,
+    ) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setIsOpen(false);
+    };
+
     const handleDelete = (id: string) => {
         api.delete(`Company/${id}`)
             .then(response => {
-                toast({
-                    title: 'Success delte company.',
-                    description: 'Company delte with success.',
-                    status: 'success',
-                    duration: 9000,
-                    isClosable: true,
-                });
                 router.push('/company/');
             })
             .catch(err => {
-                toast({
-                    title: 'Failure to delte a company.',
-                    description: 'Error to delte a company.',
-                    status: 'error',
-                    duration: 9000,
-                    isClosable: true,
-                });
+                setMessage('Failure delete companies.');
+                setIsError(true);
+                setIsOpen(true);
             });
     };
     const handleEdit = (id: string) => {
@@ -76,160 +149,66 @@ function CompanyPage() {
 
     return (
         <>
-            <Stack padding={10}>
-                <HStack alignItems="center" justifyContent="space-between">
-                    <Heading as="h1" size="xl">
-                        List of companies
-                    </Heading>
-                    <Button colorScheme="green" onClick={() => handleCreate()}>
-                        Create a new company
+            <Stack direction="column" spacing={2}>
+                <Stack
+                    direction="row"
+                    justifyContent="space-around"
+                    alignItems="center"
+                    spacing={2}
+                    sx={{ mt: '2rem', pt: '1rem' }}
+                >
+                    <Typography variant="h2">List of Companies</Typography>
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        color="secondary"
+                        onClick={handleCreate}
+                    >
+                        <Typography variant="h6">
+                            Create a new Company
+                        </Typography>
                     </Button>
-                </HStack>
-
-                {companies.length === 0 ? (
-                    <Container>
-                        <Text>Loading...</Text>
-                        <Spinner size="xl" />
-                    </Container>
-                ) : (
-                    <Table variant="striped" colorScheme="green" size="lg">
-                        <Thead>
-                            <Tr>
-                                <Th>
-                                    <Text>id</Text>
-                                </Th>
-                                <Th>
-                                    <Text>Name</Text>
-                                </Th>
-                                <Th>
-                                    <Text>DocId</Text>
-                                </Th>
-                                <Th>
-                                    <Text>Email</Text>
-                                </Th>
-                                <Th>
-                                    <Text>Description</Text>
-                                </Th>
-                                <Th>
-                                    <Text>phoneNumber</Text>
-                                </Th>
-                                <Th>
-                                    <Text>idCompanyAddress</Text>
-                                </Th>
-                                <Th>
-                                    <Text>Created Date</Text>
-                                </Th>
-                                <Th>
-                                    <Text>Updated Date</Text>
-                                </Th>
-                                <Th>
-                                    <Text>Deleted Date</Text>
-                                </Th>
-                                <Th>
-                                    <Text>Actions</Text>
-                                </Th>
-                            </Tr>
-                        </Thead>
-                        <Tbody>
-                            {companies.map(company => {
-                                return (
-                                    <Tr key={company.id}>
-                                        <Td>{company.id}</Td>
-                                        <Td>{company.name}</Td>
-                                        <Td>{company.docId}</Td>
-                                        <Td>{company.email}</Td>
-                                        <Td>{company.description}</Td>
-                                        <Td>{company.phoneNumber}</Td>
-                                        <Td>{company.idCompanyAddress}</Td>
-                                        <Td>{company.createdAt}</Td>
-                                        <Td>{company.updatedAt}</Td>
-                                        <Td>{company.deletedAt}</Td>
-                                        <Td>
-                                            <HStack padding={5} align="center">
-                                                <Tooltip
-                                                    hasArrow
-                                                    label="Edit category"
-                                                >
-                                                    <IconButton
-                                                        colorScheme="blue"
-                                                        aria-label="Edit category"
-                                                        icon={<EditIcon />}
-                                                        onClick={() =>
-                                                            handleEdit(
-                                                                company.id,
-                                                            )
-                                                        }
-                                                    />
-                                                </Tooltip>
-                                                <Tooltip
-                                                    hasArrow
-                                                    label="Delete category"
-                                                >
-                                                    <IconButton
-                                                        colorScheme="red"
-                                                        aria-label="Delete category"
-                                                        icon={<DeleteIcon />}
-                                                        onClick={() =>
-                                                            handleDelete(
-                                                                company.id,
-                                                            )
-                                                        }
-                                                    />
-                                                </Tooltip>
-                                            </HStack>
-                                        </Td>
-                                    </Tr>
-                                );
-                            })}
-                        </Tbody>
-                        <Tfoot>
-                            <Tr>
-                                <Th>
-                                    <Text>id</Text>
-                                </Th>
-                                <Th>
-                                    <Text>Name</Text>
-                                </Th>
-                                <Th>
-                                    <Text>DocId</Text>
-                                </Th>
-                                <Th>
-                                    <Text>Email</Text>
-                                </Th>
-                                <Th>
-                                    <Text>Description</Text>
-                                </Th>
-                                <Th>
-                                    <Text>phoneNumber</Text>
-                                </Th>
-                                <Th>
-                                    <Text>idCompanyAddress</Text>
-                                </Th>
-                                <Th>
-                                    <Text>Created Date</Text>
-                                </Th>
-                                <Th>
-                                    <Text>Updated Date</Text>
-                                </Th>
-                                <Th>
-                                    <Text>Deleted Date</Text>
-                                </Th>
-                                <Th>
-                                    <Text>Actions</Text>
-                                </Th>
-                            </Tr>
-                        </Tfoot>
-                    </Table>
-                )}
-                <HStack>
-                    <Text>Current page {pagedResult?.currentPage}</Text>
-                    <Text>Page count {pagedResult?.pageCount}</Text>
-                    <Text>Page size {pagedResult?.pageSize}</Text>
-                    <Text>Row count {pagedResult?.rowCount}</Text>
-                    <Text>Frist page {pagedResult?.firstRowOnPage}</Text>
-                    <Text>Last page {pagedResult?.lastRowOnPage}</Text>
-                </HStack>
+                </Stack>
+                <Stack
+                    direction="column"
+                    justifyContent="center"
+                    alignItems="center"
+                    spacing={2}
+                >
+                    {!companies && !pagedResult ? (
+                        <Skeleton
+                            variant="rectangular"
+                            width={210}
+                            height={118}
+                        />
+                    ) : (
+                        <DataGrid
+                            sx={{ backgroundColor: 'rgba(72, 180, 212, 0.3)' }}
+                            rows={companies}
+                            columns={columns}
+                            initialState={{
+                                pagination: {
+                                    paginationModel: {
+                                        page: 1,
+                                        pageSize: 10,
+                                    },
+                                },
+                            }}
+                            pageSizeOptions={[5, 10, 20, 30]}
+                            slots={{
+                                toolbar: CustomGridToolbar,
+                            }}
+                        />
+                    )}
+                </Stack>
             </Stack>
+
+            <SnackbarAlert
+                open={isOpen}
+                handleClose={handleClose}
+                isError={isError}
+                message={message}
+            />
         </>
     );
 }

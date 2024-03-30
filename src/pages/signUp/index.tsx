@@ -18,6 +18,7 @@ import {
 } from '@mui/material';
 
 import styles from './styles.module.css';
+import SnackbarAlert from '@/components/SnackbarAlert/SnackbarAlert';
 
 const schema = yup.object().shape({
     username: yup.string().required('Username is required'),
@@ -32,11 +33,8 @@ const schema = yup.object().shape({
 });
 
 const SignUp: React.FC = () => {
-    const [showPassword, setShowPassword] = React.useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
-
     const [isError, setIsError] = React.useState(false);
-    const [open, setOpen] = React.useState(false);
+    const [isOpen, setIsOpen] = React.useState(false);
     const [message, setMessage] = React.useState('Teste');
 
     const handleClose = (
@@ -47,7 +45,7 @@ const SignUp: React.FC = () => {
             return;
         }
 
-        setOpen(false);
+        setIsOpen(false);
     };
 
     const {
@@ -68,13 +66,13 @@ const SignUp: React.FC = () => {
 
             setMessage('Success singUp.');
             setIsError(false);
-            setOpen(true);
+            setIsOpen(true);
 
             router.push('/');
         } catch (err) {
             setMessage('Failure singUp.');
             setIsError(true);
-            setOpen(true);
+            setIsOpen(true);
         }
     };
 
@@ -121,6 +119,7 @@ const SignUp: React.FC = () => {
                                         sx={{
                                             input: { color: '#000' },
                                             label: { color: '#000' },
+                                            width: '100%',
                                         }}
                                         {...register('username')}
                                         error={!!errors.username}
@@ -136,6 +135,7 @@ const SignUp: React.FC = () => {
                                         sx={{
                                             input: { color: '#000' },
                                             label: { color: '#000' },
+                                            width: '100%',
                                         }}
                                         {...register('password')}
                                         error={!!errors.password}
@@ -151,6 +151,7 @@ const SignUp: React.FC = () => {
                                         sx={{
                                             input: { color: '#000' },
                                             label: { color: '#000' },
+                                            width: '100%',
                                         }}
                                         {...register('confirmPassword')}
                                         error={!!errors.confirmPassword}
@@ -178,6 +179,7 @@ const SignUp: React.FC = () => {
                                         sx={{
                                             input: { color: '#000' },
                                             label: { color: '#000' },
+                                            width: '100%',
                                         }}
                                         {...register('email')}
                                         error={!!errors.email}
@@ -193,6 +195,7 @@ const SignUp: React.FC = () => {
                                         sx={{
                                             input: { color: '#000' },
                                             label: { color: '#000' },
+                                            width: '100%',
                                         }}
                                         {...register('firstName')}
                                         error={!!errors.firstName}
@@ -208,6 +211,7 @@ const SignUp: React.FC = () => {
                                         sx={{
                                             input: { color: '#000' },
                                             label: { color: '#000' },
+                                            width: '100%',
                                         }}
                                         {...register('lastName')}
                                         error={!!errors.lastName}
@@ -222,22 +226,19 @@ const SignUp: React.FC = () => {
                             type="submit"
                             variant="contained"
                             color="secondary"
+                            sx={{ width: '100%' }}
                         >
                             SignUp
                         </Button>
                     </Box>
                 </form>
             </Box>
-            <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-                <Alert
-                    onClose={handleClose}
-                    severity={isError ? 'error' : 'success'}
-                    variant="filled"
-                    sx={{ width: '100%' }}
-                >
-                    {message}
-                </Alert>
-            </Snackbar>
+            <SnackbarAlert
+                open={isOpen}
+                handleClose={handleClose}
+                isError={isError}
+                message={message}
+            />
         </>
     );
 };
