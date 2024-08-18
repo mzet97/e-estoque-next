@@ -125,6 +125,10 @@ function CategoryPage() {
     const handleDelete = (id: string) => {
         api.delete(`Category/${id}`)
             .then(response => {
+                setMessage('Success delete categories.');
+                setIsError(false);
+                setIsOpen(true);
+
                 router.push('/category/');
             })
             .catch(err => {

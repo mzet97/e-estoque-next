@@ -132,6 +132,10 @@ function CustomerPage() {
     const handleDelete = (id: string) => {
         api.delete(`Customer/${id}`)
             .then(response => {
+                setMessage('Success delete customers.');
+                setIsError(false);
+                setIsOpen(true);
+
                 router.push('/customer/');
             })
             .catch(err => {

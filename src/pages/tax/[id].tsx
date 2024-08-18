@@ -136,7 +136,7 @@ export default function EditTaxPage() {
                                     Enter with data
                                 </Typography>
                             </Box>
-                            <Box className={styles.boxItem} hidden>
+                            <Box className={styles.boxItemHidden} hidden>
                                 <TextField
                                     disabled
                                     hidden

@@ -11,10 +11,17 @@ export const authOptions: NextAuthOptions = {
         CredentialsProvider({
             credentials: {},
             async authorize(credentials, req) {
+                console.log('Inside authorize function');
+                if (!credentials) {
+                    console.log('No credentials provided');
+                    throw new Error('No credentials provided');
+                }
+
                 const { email, password } = credentials as {
                     email: string;
                     password: string;
                 };
+                console.log('credentials', credentials);
                 const { token, decoded, error } = await signIn({
                     email,
                     password,
@@ -29,6 +36,7 @@ export const authOptions: NextAuthOptions = {
                     };
                 }
                 if (error) {
+                    console.error('error', error);
                     throw new Error(error);
                 }
                 return null;

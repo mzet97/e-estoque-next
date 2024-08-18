@@ -131,10 +131,14 @@ function CompanyPage() {
     const handleDelete = (id: string) => {
         api.delete(`Company/${id}`)
             .then(response => {
+                setMessage('Success delete company.');
+                setIsError(false);
+                setIsOpen(true);
+
                 router.push('/company/');
             })
             .catch(err => {
-                setMessage('Failure delete companies.');
+                setMessage('Failure delete company.');
                 setIsError(true);
                 setIsOpen(true);
             });

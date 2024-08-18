@@ -54,6 +54,7 @@ const Login: React.FC = () => {
 
     const onSubmit = async (values: UserLogin) => {
         try {
+            console.log('values', values);
             const response = await signIn('credentials', {
                 redirect: false,
                 email: values.email,

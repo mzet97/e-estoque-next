@@ -210,8 +210,8 @@ const Header: React.FC = () => {
                             {!!session ? (
                                 <Button
                                     variant="contained"
+                                    color="error"
                                     onClick={() => signOut()}
-                                    className="bg-[#f87171] text-[##fff] font-mono"
                                 >
                                     Logout
                                 </Button>
@@ -225,7 +225,7 @@ const Header: React.FC = () => {
                                     <NextLink href="/login">
                                         <Button
                                             variant="contained"
-                                            className="bg-[#34d399] text-[#000] font-mono"
+                                            color="success"
                                         >
                                             Login
                                         </Button>
@@ -233,7 +233,7 @@ const Header: React.FC = () => {
                                     <NextLink href="/signUp">
                                         <Button
                                             variant="contained"
-                                            className="bg-[#fef08a] text-[#000] font-mono"
+                                            color="secondary"
                                         >
                                             SingUp
                                         </Button>
