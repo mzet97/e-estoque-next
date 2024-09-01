@@ -87,7 +87,7 @@ const Header: React.FC = () => {
     };
 
     return (
-        <AppBar position="static">
+        <AppBar position="static" color="primary" enableColorOnDark>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Typography
@@ -233,7 +233,7 @@ const Header: React.FC = () => {
                                     <NextLink href="/signUp">
                                         <Button
                                             variant="contained"
-                                            color="secondary"
+                                            color="info"
                                         >
                                             SingUp
                                         </Button>

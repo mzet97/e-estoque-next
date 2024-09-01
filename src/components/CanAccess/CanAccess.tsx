@@ -8,19 +8,21 @@ import { api } from '@/services/apiClient';
 export default function canAccess(Component: any) {
     return function CanAccess(props: any) {
         const router = useRouter();
-        const { data: session } = useSession();
+        const { data: session, status } = useSession();
 
         useEffect(() => {
+            if (status === 'loading') return;
             if (!session?.user) {
-                return router.push('/');
+                router.push('/');
             }
-        }, []);
+        }, [session, status, router]);
 
-        if (!session?.user) {
+        if (status === 'loading' || !session?.user) {
             return null;
         }
 
         api.defaults.headers['Authorization'] = `Bearer ${session.user.jwt}`;
+
         return <Component {...props} />;
     };
 }
