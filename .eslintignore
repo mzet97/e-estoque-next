@@ -1,3 +1,5 @@
-**/node_modules/*
-**/out/*
-**/.next/*
+node_modules
+.next
+yarn.lock
+package-lock.json
+public
