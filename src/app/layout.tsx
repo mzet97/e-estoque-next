@@ -17,7 +17,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-br">
       <body>
-        <SessionProvider>
+        <SessionProvider
+          refetchInterval={5 * 60}
+          refetchOnWindowFocus={false}
+        >
           <EmotionRegistry>
             <ThemeProvider theme={theme}>
               <CssBaseline />

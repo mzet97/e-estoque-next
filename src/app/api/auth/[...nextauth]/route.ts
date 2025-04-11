@@ -1,21 +1,62 @@
-import NextAuth from 'next-auth';
+import NextAuth, { DefaultSession } from 'next-auth';
+import type { NextAuthConfig } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 
-const authenticateWithExternalAPI = async (email: string, password: string) => {
-  const res = await axios.post(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/Auth/login`,
-    {
-      email,
-      password,
-    },
-  );
+interface LoginResponse {
+  accessToken: string;
+  expiresIn: number;
+  refreshToken: string;
+  refreshExpiresIn: number;
+  tokenType: string;
+  notBeforePolicy: string;
+  sessionState: string;
+  scope: string;
+}
 
-  return res.data;
+interface KeycloakToken {
+  exp: number;
+  iat: number;
+  auth_time: number;
+  jti: string;
+  iss: string;
+  aud: string[];
+  sub: string;
+  typ: string;
+  azp: string;
+  nonce: string;
+  session_state: string;
+  name: string;
+  given_name: string;
+  family_name: string;
+  preferred_username: string;
+  email: string;
+  email_verified: boolean;
+  resource_access: {
+    'e-estoque-client': {
+      roles: string[];
+    };
+  };
+}
+
+const authenticateWithExternalAPI = async (email: string, password: string): Promise<LoginResponse> => {
+  try {
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/Auth/login`,
+      {
+        email,
+        password,
+      },
+    );
+    return res.data;
+  } catch (error) {
+    console.error('Authentication error:', error);
+    throw error;
+  }
 };
 
-const authOptions = {
+const authOptions: NextAuthConfig = {
   pages: {
     signIn: '/auth/signIn',
     signOut: '/auth/signIn',
@@ -27,28 +68,32 @@ const authOptions = {
         email: { label: 'Email', type: 'text' },
         password: { label: 'Password', type: 'password' },
       },
-      authorize: async (credentials) => {
+      async authorize(credentials) {
         try {
-          const data = await authenticateWithExternalAPI(
-            credentials.email,
-            credentials.password,
-          );
+          const email = credentials?.email;
+          const password = credentials?.password;
 
-          if (data && data.accessToken) {
-            const decoded = jwtDecode(data.accessToken) as any;
-            console.log(decoded, '1');
+          if (!email || !password || typeof email !== 'string' || typeof password !== 'string') {
+            return null;
+          }
+
+          const data = await authenticateWithExternalAPI(email, password);
+
+          if (data?.accessToken) {
+            const decoded = jwtDecode<KeycloakToken>(data.accessToken);
+            
             return {
               id: decoded.sub,
-              name: decoded.preferred_username,
+              name: decoded.name || decoded.preferred_username,
               email: decoded.email,
               externalToken: data.accessToken,
-              roles: decoded.resource_access['e-estoque-client'].roles,
+              roles: decoded.resource_access?.['e-estoque-client']?.roles || [],
             };
           }
-          throw new Error('Invalid credentials.');
+          return null;
         } catch (error) {
-          console.error(error, '3');
-          throw new Error('Invalid credentials.');
+          console.error('Authorization error:', error);
+          return null;
         }
       },
     }),
@@ -56,18 +101,29 @@ const authOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.externalToken = user.externalToken;
-        token.id = user.id;
+        return {
+          ...token,
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          externalToken: user.externalToken,
+          roles: user.roles,
+        };
       }
-      console.log(token, '4');
       return token;
     },
     async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id as string;
-        session.user.externalToken = token.externalToken;
-      }
-      return session;
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.id,
+          name: token.name,
+          email: token.email,
+          externalToken: token.externalToken,
+          roles: token.roles,
+        },
+      };
     },
   },
   debug: process.env.NODE_ENV === 'development',

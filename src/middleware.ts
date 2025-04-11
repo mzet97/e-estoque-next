@@ -2,54 +2,77 @@ import { NextResponse } from 'next/server';
 import { NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
-// Função middleware para controle de autenticação
+// Rotas que não precisam de autenticação além das padrões do next-auth
+const publicRoutes = [
+  '/favicon.ico',
+  '/sitemap.xml',
+  '/robots.txt',
+  '/public',
+];
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Verificar se é uma página de autenticação
+  // Verificar se é uma rota pública (API auth, recursos estáticos, etc)
+  if (
+    pathname.startsWith('/api/auth') ||
+    pathname.startsWith('/_next') ||
+    publicRoutes.some(route => pathname.startsWith(route))
+  ) {
+    return NextResponse.next();
+  }
+
+  // Páginas de autenticação
   const isAuthPage = pathname.startsWith('/auth/');
 
-  // Verificar se é uma rota pública (API, recursos estáticos, etc)
-  const isPublicPath = ['/api/auth', '/_next', '/favicon.ico', '/public'].some(
-    (path) => pathname.startsWith(path),
-  );
+  try {
+    // Obter o token da sessão
+    const token = await getToken({
+      req: request,
+      secret: process.env.AUTH_SECRET,
+    });
 
-  // Obter o token da sessão
-  const token = await getToken({
-    req: request,
-    secret: process.env.AUTH_SECRET,
-  });
+    // Redirecionamentos com base no estado de autenticação
+    if (token) {
+      // Usuário autenticado tentando acessar páginas de auth ou raiz
+      if (isAuthPage || pathname === '/') {
+        return NextResponse.redirect(new URL('/dashboard', request.url));
+      }
+      return NextResponse.next();
+    }
 
-  // Se o usuário acessar a raiz e estiver logado, redirecionar para o dashboard
-  if (pathname === '/' && token) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
-  }
+    // Usuário não autenticado
+    if (!isAuthPage) {
+      const searchParams = new URLSearchParams();
+      // Armazena a URL atual para redirecionamento após o login
+      if (pathname !== '/') {
+        searchParams.set('callbackUrl', pathname);
+      }
+      const signInUrl = new URL('/auth/signIn', request.url);
+      signInUrl.search = searchParams.toString();
+      return NextResponse.redirect(signInUrl);
+    }
 
-  // Se for uma página de autenticação e o usuário já estiver autenticado, redirecionar para o dashboard
-  if (isAuthPage && token) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
-  }
-
-  // Se não for uma página de autenticação nem uma rota pública e o usuário não estiver autenticado, redirecionar para login
-  if (!isAuthPage && !isPublicPath && !token) {
+    return NextResponse.next();
+  } catch (error) {
+    console.error('Middleware error:', error);
+    // Em caso de erro, redireciona para login
     return NextResponse.redirect(new URL('/auth/signIn', request.url));
   }
-
-  return NextResponse.next();
 }
 
-// Exportação padrão da função middleware
-export default middleware;
-
-// Configurar quais caminhos o middleware deve ser executado
 export const config = {
+  // Matcher ignorando arquivos estáticos e rotas de API de autenticação
   matcher: [
     /*
-     * Faz o match para todas as rotas, exceto:
-     * 1. /api/auth/* (autenticação do NextAuth)
-     * 2. /_next/* (arquivos do Next.js)
-     * 3. /favicon.ico, /sitemap.xml (arquivos estáticos)
+     * Match all request paths except for the ones starting with:
+     * - api/auth (NextAuth.js authentication API)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - sitemap.xml (SEO file)
+     * - robots.txt (SEO file)
      */
-    '/((?!api/auth|_next|favicon.ico|sitemap.xml).*)',
+    '/((?!api/auth|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
   ],
 };
