@@ -9,8 +9,10 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getCategories } from './api/categoryService';
 import { Category } from './types/Category';
+import { useSnackbar } from '@/context/SnackbarContext';
 
 const CategoryPage: React.FC = () => {
+  const { showMessage } = useSnackbar();
   const { data: session, status } = useSession();
   const router = useRouter();
   const [categories, setCategories] = useState<Category[]>([]);
@@ -22,8 +24,10 @@ const CategoryPage: React.FC = () => {
         const categoriesData = await getCategories();
         setCategories(categoriesData);
         setIsLoading(false);
+        showMessage('Categories loaded successfully', 'success');
       } catch (error) {
         console.error("Erro ao buscar categorias:", error);
+        showMessage('Error fetching Categories loaded successfully', 'error');
         setCategories([]);
         setIsLoading(false);
       }

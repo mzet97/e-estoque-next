@@ -2,23 +2,25 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import CategoryForm from '../components/CategoryForm';
+import TaxForm from '../components/TaxForm';
 
-const CategoryCreatePage = () => {
+const TaxCreatePage = () => {
   const router = useRouter();
 
   const handleSuccess = () => {
-    router.push('/dashboard/category');
+    // Redirecionar para a listagem após a criação
+    router.push('/dashboard/tax');
   };
 
   const handleCancel = () => {
-    router.push('/dashboard/category');
+    // Redirecionar para a listagem
+    router.push('/dashboard/tax');
   };
 
   return (
     <div>
-      <CategoryForm
-        title="Create Category"
+      <TaxForm
+        title="Create Tax"
         onSuccess={handleSuccess}
         onCancel={handleCancel}
       />
@@ -26,4 +28,4 @@ const CategoryCreatePage = () => {
   );
 };
 
-export default CategoryCreatePage;
+export default TaxCreatePage;

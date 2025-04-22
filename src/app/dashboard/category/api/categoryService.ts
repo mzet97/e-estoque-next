@@ -1,24 +1,11 @@
 import axiosInstance from '@/config/axiosInstance';
 import { Category } from '../types/Category';
-
-interface ApiResponse<T> {
-  data: T;
-  success: boolean;
-  message: string;
-  pagedResult?: {
-    currentPage: number;
-    pageCount: number;
-    pageSize: number;
-    rowCount: number;
-    firstRowOnPage: number;
-    lastRowOnPage: number;
-  };
-}
+import ApiResponse from '@/types/ApiResponse';
 
 export const getCategories = async (): Promise<Category[]> => {
   try {
     const response = await axiosInstance.get<ApiResponse<Category[]>>('/categories');
-    return response.data.data; // Extract the data array from the response wrapper
+    return response.data.data;
   } catch (error) {
     console.error("Erro ao buscar categorias:", error);
     throw error;

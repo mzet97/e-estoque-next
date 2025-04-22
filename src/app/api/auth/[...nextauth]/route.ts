@@ -56,6 +56,20 @@ const authenticateWithExternalAPI = async (email: string, password: string): Pro
   }
 };
 
+// Função para renovar o accessToken usando o refreshToken
+const refreshAccessToken = async (refreshToken: string) => {
+  try {
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/Auth/refresh-token`,
+      { refreshToken }
+    );
+    return res.data as LoginResponse;
+  } catch (error) {
+    console.error('Error refreshing access token:', error);
+    return null;
+  }
+};
+
 const authOptions: NextAuthConfig = {
   pages: {
     signIn: '/auth/signIn',
@@ -81,13 +95,16 @@ const authOptions: NextAuthConfig = {
 
           if (data?.accessToken) {
             const decoded = jwtDecode<KeycloakToken>(data.accessToken);
-            
+            console.log('Decoded token:', decoded);
+            console.log('User roles:', decoded.resource_access?.['e-estoque-client']?.roles || []);
             return {
               id: decoded.sub,
               name: decoded.name || decoded.preferred_username,
               email: decoded.email,
               externalToken: data.accessToken,
               roles: decoded.resource_access?.['e-estoque-client']?.roles || [],
+              refreshToken: data.refreshToken,
+              expiresIn: data.expiresIn,
             };
           }
           return null;
@@ -99,7 +116,8 @@ const authOptions: NextAuthConfig = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger }) {
+      // Primeira vez (login)
       if (user) {
         return {
           ...token,
@@ -108,8 +126,37 @@ const authOptions: NextAuthConfig = {
           email: user.email,
           externalToken: user.externalToken,
           roles: user.roles,
+          refreshToken: user.refreshToken,
+          accessTokenExpires: Date.now() + (user.expiresIn ? user.expiresIn * 1000 : 0),
         };
       }
+
+      // Verifica se o accessToken está expirado
+      if (token.externalToken && token.accessTokenExpires && Date.now() < token.accessTokenExpires) {
+        return token;
+      }
+
+      // Se expirou, tenta renovar
+      if (token.refreshToken) {
+        const refreshed = await refreshAccessToken(token.refreshToken as string);
+        if (refreshed && refreshed.accessToken) {
+          return {
+            ...token,
+            externalToken: refreshed.accessToken,
+            accessTokenExpires: Date.now() + refreshed.expiresIn * 1000,
+            refreshToken: refreshed.refreshToken ?? token.refreshToken,
+          };
+        } else {
+          // Se não conseguir renovar, remove tokens
+          return {
+            ...token,
+            externalToken: null,
+            refreshToken: null,
+            accessTokenExpires: null,
+          };
+        }
+      }
+
       return token;
     },
     async session({ session, token }) {

@@ -1,50 +1,50 @@
 'use client';
 
-import CategoryForm from '../../components/CategoryForm';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { getCategory } from '../../api/categoryService';
-import { Category } from '../../types/Category';
 import { Box, CircularProgress } from '@mui/material';
+import { Tax } from '../../types/Tax';
+import { getTax } from '../../api/taxService';
+import TaxForm from '../../components/TaxForm';
 import { useSnackbar } from '@/context/SnackbarContext';
 
 interface Props {
   params: { id: string };
 }
 
-const CategoryEditPage: React.FC<Props> = ({ params }) => {
+const TaxEditPage: React.FC<Props> = ({ params }) => {
   const { showMessage } = useSnackbar();
   const { id } = params;
   const router = useRouter();
-  const [initialCategory, setInitialCategory] = useState<Category | null>(null);
+  const [initialTax, setInitialTax] = useState<Tax | null>(null);
   const [isLoading, setIsLoading] = useState(true); // Estado para controlar o carregamento
 
   useEffect(() => {
-    const loadCategory = async () => {
+    const loadTax = async () => {
       setIsLoading(true); // Inicia o carregamento
       try {
-        const categoryData = await getCategory(id);
-        setInitialCategory(categoryData);
-        showMessage('Category loaded successfully', 'success');
+        const taxData = await getTax(id);
+        setInitialTax(taxData);
+        showMessage('Tax loaded successfully', 'success');
       } catch (error) {
-        console.error('Erro ao buscar categoria:', error);
-        showMessage('Error loading category', 'error');
+        console.error('Erro ao buscar taxa:', error);
+        showMessage('Error loading tax', 'error');
       } finally {
-        setIsLoading(false);
+        setIsLoading(false); // Finaliza o carregamento, independentemente do resultado
       }
     };
 
-    loadCategory();
+    loadTax();
   }, [id]);
 
   const handleSuccess = () => {
     // Redirecionar para a listagem após a edição
-    router.push('/dashboard/category');
+    router.push('/dashboard/tax');
   };
 
   const handleCancel = () => {
     // Redirecionar para a listagem
-    router.push('/dashboard/category');
+    router.push('/dashboard/tax');
   };
 
   if (isLoading) {
@@ -60,15 +60,15 @@ const CategoryEditPage: React.FC<Props> = ({ params }) => {
     );
   }
 
-  if (!initialCategory) {
-    return <p>Categoria não encontrada.</p>;
+  if (!initialTax) {
+    return <p>Taxa não encontrada.</p>;
   }
 
   return (
     <div>
-      <CategoryForm
-        title="Edit Category"
-        initialCategory={initialCategory}
+      <TaxForm
+        title="Edit Tax"
+        initialTax={initialTax}
         onSuccess={handleSuccess}
         onCancel={handleCancel}
       />
@@ -76,4 +76,4 @@ const CategoryEditPage: React.FC<Props> = ({ params }) => {
   );
 };
 
-export default CategoryEditPage;
+export default TaxEditPage;

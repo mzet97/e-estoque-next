@@ -9,6 +9,7 @@ import theme from '@/theme/theme';
 import Layout from '@/components/Layout';
 import { usePathname } from 'next/navigation';
 import { ColorModeProvider } from '@/theme/ColorModeProvider';
+import { SnackbarProvider } from '@/context/SnackbarContext';
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname() || '';
@@ -24,9 +25,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <EmotionRegistry>
             <ThemeProvider theme={theme}>
               <CssBaseline />
-              <ColorModeProvider>
-                {isAuthPage ? children : <Layout>{children}</Layout>}
-              </ColorModeProvider>
+              <SnackbarProvider>
+                <ColorModeProvider>
+                  {isAuthPage ? children : <Layout>{children}</Layout>}
+                </ColorModeProvider>
+              </SnackbarProvider>
             </ThemeProvider>
           </EmotionRegistry>
         </SessionProvider>

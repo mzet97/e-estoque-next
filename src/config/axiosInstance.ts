@@ -11,9 +11,15 @@ const axiosInstance: AxiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   async (config) => {
     const session = await getSession();
-    
-    if (session?.user?.externalToken && config.headers) {
+
+    // Só adiciona o header se houver token válido
+    if (session?.user?.externalToken && config.headers && session.user.externalToken !== 'null') {
       config.headers.Authorization = `Bearer ${session.user.externalToken}`;
+    } else {
+      // Remove o header se não houver token
+      if (config.headers?.Authorization) {
+        delete config.headers.Authorization;
+      }
     }
     return config;
   },
