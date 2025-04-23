@@ -16,6 +16,7 @@ import StoreIcon from '@mui/icons-material/Store';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import DnsIcon from '@mui/icons-material/Dns';
+import ReceiptIcon from '@mui/icons-material/Receipt';
 import { useRouter } from 'next/navigation';
 
 interface MenuDrawerItems {
@@ -54,6 +55,11 @@ const items: MenuDrawerItems[] = [
     icon: <AccountBalanceIcon />,
     label: 'Tax',
     href: '/dashboard/tax',
+  },
+  {
+    icon: <ReceiptIcon />,
+    label: 'Sales',
+    href: '/dashboard/sale',
   },
 ];
 

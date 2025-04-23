@@ -1,6 +1,14 @@
 'use client';
 
-import { Box, Button, Grid, Paper, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Grid,
+  IconButton,
+  Paper,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
@@ -26,7 +34,7 @@ const TaxPage: React.FC = () => {
         setIsLoading(false);
         showMessage('Taxs loaded successfully', 'success');
       } catch (error) {
-        console.error("Erro ao buscar taxas:", error);
+        console.error('Erro ao buscar taxas:', error);
         showMessage('Error fetching taxs', 'error');
         setTaxs([]);
         setIsLoading(false);
@@ -54,29 +62,34 @@ const TaxPage: React.FC = () => {
       flex: 1,
       renderCell: (params) => (
         <Box sx={{ display: 'flex', gap: 1, margin: 1 }}>
-          <Button
-            variant="contained"
-            color='success'
-            endIcon={<EditIcon />}
-            onClick={() => router.push(`/dashboard/tax/edit/${params.row.id}`)}
-          >
-            Edit
-          </Button>
-          <Button variant="contained" color='error' endIcon={<DeleteIcon />}>
-            Delete
-          </Button>
+          <Tooltip title="Edit">
+            <IconButton
+              onClick={() =>
+                router.push(`/dashboard/tax/edit/${params.row.id}`)
+              }
+            >
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Delete">
+            <IconButton>
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
         </Box>
       ),
     },
   ];
 
-  const rows = Array.isArray(Taxs) ? Taxs.map(Tax => ({
-    id: Tax.id,
-    name: Tax.name,
-    description: Tax.description,
-    percentage: Tax.percentage,
-    idCategory: Tax.idCategory,
-  })) : [];
+  const rows = Array.isArray(Taxs)
+    ? Taxs.map((Tax) => ({
+        id: Tax.id,
+        name: Tax.name,
+        description: Tax.description,
+        percentage: Tax.percentage,
+        idCategory: Tax.idCategory,
+      }))
+    : [];
 
   if (status === 'loading') {
     return <p>Carregando...</p>;
@@ -97,7 +110,11 @@ const TaxPage: React.FC = () => {
               </Typography>
             </Grid>
             <Grid size={{ sm: 2, xs: 2, md: 2, lg: 2, xl: 2 }}>
-              <Button variant="contained" color="primary" onClick={handleCreateClick}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleCreateClick}
+              >
                 Create Tax
               </Button>
             </Grid>
