@@ -9,5 +9,6 @@
         "sucesso",
         "Usuário"
     ],
-    "cSpell.enabled": false
+    "cSpell.enabled": false,
+    "zencoder.enableRepoIndexing": true
 }

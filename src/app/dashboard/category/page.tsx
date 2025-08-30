@@ -1,93 +1,43 @@
 'use client';
 
-import {
-  Box,
-  Button,
-  Grid,
-  IconButton,
-  Paper,
-  Tooltip,
-  Typography,
-} from '@mui/material';
-import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
+import { GridColDef } from '@mui/x-data-grid';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { getCategories } from './api/categoryService';
 import { Category } from './types/Category';
-import { useSnackbar } from '@/context/SnackbarContext';
+import DataGridCustom from '@/components/DataGridCustom';
+import { ServerSideParams, PaginatedResponse } from '@/types/DataGridTypes';
+import { getCategoriesPaginated } from './api/categoryService';
+
+// Tipo específico para o DataGrid que garante que o id seja obrigatório
+type CategoryWithId = Category & { id: string; };
 
 const CategoryPage: React.FC = () => {
-  const { showMessage } = useSnackbar();
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const loadCategories = async () => {
-      try {
-        const categoriesData = await getCategories();
-        setCategories(categoriesData);
-        setIsLoading(false);
-        showMessage('Categories loaded successfully', 'success');
-      } catch (error) {
-        console.error('Erro ao buscar categorias:', error);
-        showMessage('Error fetching Categories loaded successfully', 'error');
-        setCategories([]);
-        setIsLoading(false);
-      }
-    };
-
-    if (session?.user) {
-      loadCategories();
-    }
-  }, [status]);
 
   const handleCreateClick = () => {
     router.push('/dashboard/category/create');
   };
 
-  const columns: GridColDef[] = [
-    { field: 'id', headerName: 'Id', flex: 1 },
-    { field: 'name', headerName: 'Name', flex: 1 },
-    { field: 'description', headerName: 'Description', flex: 1 },
-    { field: 'shortDescription', headerName: 'Short Description', flex: 1 },
-    {
-      field: 'actions',
-      headerName: 'Actions',
-      flex: 1,
-      renderCell: (params) => (
-        <Box sx={{ display: 'flex', gap: 1, margin: 1 }}>
-          <Tooltip title="Edit">
-            <IconButton
-              onClick={() =>
-                router.push(`/dashboard/category/edit/${params.row.id}`)
-              }
-            >
-              <EditIcon />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Delete">
-            <IconButton>
-              <DeleteIcon />
-            </IconButton>
-          </Tooltip>
-        </Box>
-      ),
-    },
-  ];
+  const handleEditClick = (id: string) => {
+    router.push(`/dashboard/category/edit/${id}`);
+  };
 
-  const rows = Array.isArray(categories)
-    ? categories.map((category) => ({
-        id: category.id,
-        name: category.name,
-        description: category.description,
-        shortDescription: category.shortDescription,
-      }))
-    : [];
+  const handleDeleteClick = (id: string) => {
+    // Implementar lógica de delete aqui
+    console.log('Delete category:', id);
+  };
+
+  const fetchCategories = async (params: ServerSideParams): Promise<PaginatedResponse<CategoryWithId>> => {
+    return await getCategoriesPaginated(params) as PaginatedResponse<CategoryWithId>;
+  };
+
+  const columns: GridColDef[] = [
+    { field: 'id', headerName: 'Id', width: 100 },
+    { field: 'name', headerName: 'Name', flex: 1, minWidth: 150 },
+    { field: 'description', headerName: 'Description', flex: 2, minWidth: 200 },
+    { field: 'shortDescription', headerName: 'Short Description', flex: 1, minWidth: 150 },
+  ];
 
   if (status === 'loading') {
     return <p>Carregando...</p>;
@@ -98,45 +48,17 @@ const CategoryPage: React.FC = () => {
   }
 
   return (
-    <>
-      <Paper elevation={5} sx={{ padding: 5, margin: 5 }}>
-        <Box sx={{ flexGrow: 1 }}>
-          <Grid container spacing={2}>
-            <Grid size={{ sm: 10, xs: 10, md: 10, lg: 10, xl: 10 }}>
-              <Typography variant="h3" gutterBottom>
-                List of Categories
-              </Typography>
-            </Grid>
-            <Grid size={{ sm: 2, xs: 2, md: 2, lg: 2, xl: 2 }}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleCreateClick}
-              >
-                Create Category
-              </Button>
-            </Grid>
-            <Grid
-              direction="column"
-              sx={{
-                justifyContent: 'flex-start',
-                alignItems: 'center',
-              }}
-              size={{ sm: 5, xs: 8, md: 12, lg: 12, xl: 12 }}
-            >
-              <DataGrid
-                rows={rows}
-                columns={columns}
-                loading={isLoading}
-                slots={{
-                  toolbar: GridToolbar,
-                }}
-              />
-            </Grid>
-          </Grid>
-        </Box>
-      </Paper>
-    </>
+    <DataGridCustom<CategoryWithId>
+      columns={columns}
+      fetchData={fetchCategories}
+      title="List of Categories"
+      createButtonText="Create Category"
+      onCreateClick={handleCreateClick}
+      onEditClick={handleEditClick}
+      onDeleteClick={handleDeleteClick}
+      showActions={true}
+      initialPageSize={25}
+    />
   );
 };
 
