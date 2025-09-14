@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   Box,
   Button,
@@ -41,6 +41,12 @@ const DataGridCustom = <T extends { id: string | number }>({
   initialPageSize = 25,
 }: DataGridCustomProps<T>) => {
   const { showMessage } = useSnackbar();
+  const fetchDataRef = useRef(fetchData);
+  const showMessageRef = useRef(showMessage);
+  
+  // Atualizar as refs quando as props mudarem
+  fetchDataRef.current = fetchData;
+  showMessageRef.current = showMessage;
   const [rows, setRows] = useState<T[]>([]);
   const [loading, setLoading] = useState(true);
   const [rowCount, setRowCount] = useState(0);
@@ -81,18 +87,18 @@ const DataGridCustom = <T extends { id: string | number }>({
         filterModel: convertFilterModel(filterModel),
       };
 
-      const response: PaginatedResponse<T> = await fetchData(params);
-      setRows(response.data);
-      setRowCount(response.total);
+      const response: PaginatedResponse<T> = await fetchDataRef.current(params);
+      setRows(response.data || []);
+      setRowCount(response.total || 0);
     } catch (error) {
       console.error('Erro ao carregar dados:', error);
-      showMessage('Erro ao carregar dados', 'error');
+      showMessageRef.current('Erro ao carregar dados', 'error');
       setRows([]);
       setRowCount(0);
     } finally {
       setLoading(false);
     }
-  }, [paginationModel, sortModel, filterModel, fetchData, showMessage]);
+  }, [paginationModel, sortModel, filterModel]);
 
   // Carregar dados quando os parâmetros mudarem
   useEffect(() => {

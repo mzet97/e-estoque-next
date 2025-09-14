@@ -3,6 +3,7 @@
 import { GridColDef } from '@mui/x-data-grid';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { useCallback } from 'react';
 import { Category } from './types/Category';
 import DataGridCustom from '@/components/DataGridCustom';
 import { ServerSideParams, PaginatedResponse } from '@/types/DataGridTypes';
@@ -28,9 +29,9 @@ const CategoryPage: React.FC = () => {
     console.log('Delete category:', id);
   };
 
-  const fetchCategories = async (params: ServerSideParams): Promise<PaginatedResponse<CategoryWithId>> => {
+  const fetchCategories = useCallback(async (params: ServerSideParams): Promise<PaginatedResponse<CategoryWithId>> => {
     return await getCategoriesPaginated(params) as PaginatedResponse<CategoryWithId>;
-  };
+  }, []);
 
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'Id', width: 100 },
