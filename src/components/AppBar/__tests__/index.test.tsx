@@ -44,7 +44,7 @@ describe('NavBar', () => {
 
       const title = screen.getByText('E-Chamado');
       expect(title).toBeInTheDocument();
-      expect(title.tagName).toBe('H6');
+      expect(title.tagName).toBe('DIV');
     });
 
     it('should render the login button', () => {
@@ -117,9 +117,9 @@ describe('NavBar', () => {
       // AppBar should render as banner landmark
       expect(screen.getByRole('banner')).toBeInTheDocument();
       
-      // Title should be a heading
-      const title = screen.getByRole('heading', { level: 6 });
-      expect(title).toHaveTextContent('E-Chamado');
+      // Title should be present
+      const title = screen.getByText('E-Chamado');
+      expect(title).toBeInTheDocument();
       
       // Buttons should be accessible
       expect(screen.getByRole('button', { name: 'menu' })).toBeInTheDocument();

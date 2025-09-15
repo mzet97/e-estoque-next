@@ -85,7 +85,7 @@ describe('Layout', () => {
         </Layout>
       );
 
-      const mainContent = container.querySelector('[component="main"]');
+      const mainContent = container.querySelector('main');
       expect(mainContent).toBeInTheDocument();
     });
   });
@@ -182,7 +182,7 @@ describe('Layout', () => {
         </Layout>
       );
 
-      const mainContent = container.querySelector('[component="main"]');
+      const mainContent = container.querySelector('main');
       expect(mainContent).toHaveStyle({ flexGrow: '1' });
     });
 
@@ -194,7 +194,7 @@ describe('Layout', () => {
       );
 
       // Check if toolbar spacing box exists
-      const mainContent = container.querySelector('[component="main"]');
+      const mainContent = container.querySelector('main');
       const toolbarSpacing = mainContent?.firstChild;
       expect(toolbarSpacing).toBeInTheDocument();
     });
@@ -301,7 +301,7 @@ describe('Layout', () => {
         </Layout>
       );
 
-      const mainContent = container.querySelector('[component="main"]');
+      const mainContent = container.querySelector('main');
       
       // Check if transition styles are applied (they should be present in the style attribute)
       expect(mainContent).toBeInTheDocument();
@@ -320,7 +320,7 @@ describe('Layout', () => {
         </Layout>
       );
 
-      const mainContent = container.querySelector('[component="main"]');
+      const mainContent = container.querySelector('main');
       
       // When drawer is closed, should have smaller margin
       expect(mainContent).toBeInTheDocument();
@@ -383,9 +383,9 @@ describe('Layout', () => {
         </Layout>
       );
 
-      const mainContent = container.querySelector('[component="main"]');
+      const mainContent = container.querySelector('main');
       expect(mainContent).toBeInTheDocument();
-      expect(mainContent?.tagName.toLowerCase()).toBe('div');
+      expect(mainContent?.tagName.toLowerCase()).toBe('main');
     });
 
     it('should maintain focus management', () => {
